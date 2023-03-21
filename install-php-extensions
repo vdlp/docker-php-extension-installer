@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # This script wraps docker-php-ext-install, properly configuring the system.
-#
+# Test release build
 # Copyright (c) Michele Locati, 2018-2023
 #
 # Source: https://github.com/mlocati/docker-php-extension-installer
