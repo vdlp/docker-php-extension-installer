@@ -26,22 +26,6 @@ jobs:
         with:
           ref: master
           fetch-depth: 0
-      - name: Update README
-        if: >
-          (github.event_name == 'push' && github.ref == 'refs/heads/master')
-          || github.event_name == 'repository_dispatch'
-        run: |
-          ./scripts/update-readme
-          if ! git ls-files -m | grep -qE '^README\.md$'; then
-            echo 'README.md has not been changed'
-          else
-            echo 'README.md has been updated'
-            git config user.name 'Michele Locati'
-            git config user.email 'michele@locati.it'
-            git add README.md
-            git commit -m '[skip ci] Automatically update README.md'
-            git push
-          fi
       - name: Look for the recent version tags
         if: >
           (github.event_name == 'push' && github.ref == 'refs/heads/master')
@@ -151,24 +135,6 @@ jobs:
       - name: Set script version
         if: env.VERSIONTAG_THIS != ''
         run: sed -i -E "s/^(IPE_VERSION=)master$/\1$VERSIONTAG_THIS/" install-php-extensions
-      - name: Login to Docker Hub
-        if: env.VERSIONTAG_THIS != ''
-        uses: docker/login-action@v1
-        with:
-          username: mlocati
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build docker image
-        if: env.VERSIONTAG_THIS != ''
-        run: >
-          docker build
-          --tag "mlocati/php-extension-installer:$VERSIONTAG_THIS"
-          --tag "mlocati/php-extension-installer:${VERSIONTAG_THIS%.*}"
-          --tag "mlocati/php-extension-installer:${VERSIONTAG_THIS%%.*}"
-          --tag mlocati/php-extension-installer:latest
-          .
-      - name: Push docker image to Docker Hub
-        if: env.VERSIONTAG_THIS != ''
-        run: docker push --all-tags mlocati/php-extension-installer
       - name: Create release
         id: create_release
         if: env.VERSIONTAG_THIS != ''
