@@ -15,5 +15,5 @@ jobs:
           token: ${{ secrets.SYNC_FORK_TOKEN }}
           base: master
           head: master
-          retries: 1
+          retries: 5
           retry_after: 60
