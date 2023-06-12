@@ -194,6 +194,7 @@ install-php-extensions @fix_letsencrypt
 | apcu_bc |  |  | &check; | &check; | &check; | &check; | &check; |  |  |  |
 | ast |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | bcmath | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| bitset | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | blackfire | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | bz2 | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | calendar | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -231,6 +232,7 @@ install-php-extensions @fix_letsencrypt
 | ioncube_loader | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  | &check; |  |
 | jsmin | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |
 | json_post | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| jsonpath |  |  |  |  |  |  | &check; | &check; | &check; | &check; |
 | ldap | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | luasandbox | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | lz4[*](#special-requirements-for-lz4) |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -268,6 +270,7 @@ install-php-extensions @fix_letsencrypt
 | pdo_sqlsrv[*](#special-requirements-for-pdo_sqlsrv) |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | pgsql | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | php_trie |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; |
+| pq |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | propro | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |
 | protobuf | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | pspell | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -322,7 +325,7 @@ install-php-extensions @fix_letsencrypt
 | zookeeper | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | zstd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 
-*Number of supported extensions: 132*
+*Number of supported extensions: 135*
 <!-- END OF EXTENSIONS TABLE -->
 
 PS: the pre-installed PHP extensions are excluded from this list.
