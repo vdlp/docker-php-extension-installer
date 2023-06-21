@@ -17,4 +17,3 @@ jobs:
           head: master
           retries: 5
           retry_after: 10
-          auto_approve: true
