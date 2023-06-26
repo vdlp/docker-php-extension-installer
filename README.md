@@ -8,7 +8,11 @@ This repository contains a script that can be used to easily install a PHP exten
 
 The script will install all the required APT/APK packages; at the end of the script execution, the no-more needed packages will be removed so that the image will be much smaller.
 
-Supported docker images are all the Alpine/Debian versions, except for PHP 5.5 where we only support Debian 8 (jessie) (that is, `php:5.5`, `php:5.5-apache`, `php:5.5-cli`, `php:5.5-fpm`, `php:5.5-zts`).
+Supported docker images are:
+
+- Debian-based docker images: since jessie (Debian 8) (minimum PHP version: 5.5)
+- Alpine-based docker images: since Alpine 3.9 (minimum PHP version: 7.1)
+
 See also the notes in the [Special requirements](#special-requirements) section.
 
 ## Usage
@@ -241,7 +245,7 @@ install-php-extensions @fix_letsencrypt
 | maxminddb |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; |
 | mcrypt | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | memcache | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| memcached | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| memcached[*](#special-requirements-for-memcached) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | memprof[*](#special-requirements-for-memprof) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | mongo | &check; | &check; |  |  |  |  |  |  |  |  |
 | mongodb | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -411,20 +415,21 @@ Some extensions have special requirements:
 <!-- ########################################################### -->
 | Extension | Requirements |
 |---|---|
-| <a name="special-requirements-for-cassandra"></a>cassandra | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images<br />&bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images |
-| <a name="special-requirements-for-ddtrace"></a>ddtrace | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `jessie` docker images |
-| <a name="special-requirements-for-geos"></a>geos | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images |
+| <a name="special-requirements-for-cassandra"></a>cassandra | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images<br />&bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `bookworm` docker images |
+| <a name="special-requirements-for-ddtrace"></a>ddtrace | Not available in `jessie` docker images |
+| <a name="special-requirements-for-geos"></a>geos | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images |
 | <a name="special-requirements-for-lz4"></a>lz4 | Not available in `jessie` docker images |
-| <a name="special-requirements-for-memprof"></a>memprof | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images<br />&bull; Not available in `alpine3.11` docker images<br />&bull; Not available in `alpine3.12` docker images<br />&bull; Not available in `alpine3.13` docker images<br />&bull; Not available in `alpine3.14` docker images<br />&bull; Not available in `alpine3.15` docker images |
+| <a name="special-requirements-for-memcached"></a>memcached | Not available in `bookworm` docker images |
+| <a name="special-requirements-for-memprof"></a>memprof | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images<br />&bull; Not available in `alpine3.11` docker images<br />&bull; Not available in `alpine3.12` docker images<br />&bull; Not available in `alpine3.13` docker images<br />&bull; Not available in `alpine3.14` docker images<br />&bull; Not available in `alpine3.15` docker images |
 | <a name="special-requirements-for-parallel"></a>parallel | Requires images with PHP compiled with thread-safety enabled (`zts`) |
 | <a name="special-requirements-for-parle"></a>parle | Not available in `jessie` docker images |
-| <a name="special-requirements-for-pdo_sqlsrv"></a>pdo_sqlsrv | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in ARM architectures |
+| <a name="special-requirements-for-pdo_sqlsrv"></a>pdo_sqlsrv | Not available in ARM architectures |
 | <a name="special-requirements-for-pthreads"></a>pthreads | Requires images with PHP compiled with thread-safety enabled (`zts`) |
-| <a name="special-requirements-for-simdjson"></a>simdjson | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images |
+| <a name="special-requirements-for-simdjson"></a>simdjson | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images |
 | <a name="special-requirements-for-sodium"></a>sodium | Not available in `jessie` docker images |
-| <a name="special-requirements-for-sqlsrv"></a>sqlsrv | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `7.1-alpine3.9` docker images<br />&bull; Not available in `7.1-alpine3.10` docker images<br />&bull; Not available in ARM architectures |
+| <a name="special-requirements-for-sqlsrv"></a>sqlsrv | &bull; Not available in `7.1-alpine3.9` docker images<br />&bull; Not available in `7.1-alpine3.10` docker images<br />&bull; Not available in ARM architectures |
 | <a name="special-requirements-for-tensor"></a>tensor | &bull; Not available in `alpine3.15` docker images<br />&bull; Not available in `alpine3.16` docker images |
-| <a name="special-requirements-for-vips"></a>vips | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `jessie` docker images |
+| <a name="special-requirements-for-vips"></a>vips | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `jessie` docker images |
 <!-- END OF SPECIAL REQUIREMENTS -->
 
 ### How do I know which Linux distribution I am using?
