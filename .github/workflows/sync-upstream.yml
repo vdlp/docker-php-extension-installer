@@ -1,7 +1,7 @@
 name: Sync Fork VDLP
 on:
   schedule:
-    - cron: '0 0 * * 1' # every monday
+    - cron: '0 0 1 * *' # every month
   workflow_dispatch: # on button click
 
 jobs:
