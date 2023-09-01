@@ -209,6 +209,7 @@ install-php-extensions @fix_letsencrypt
 | ddtrace[*](#special-requirements-for-ddtrace) |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | decimal |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | ds |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| ecma_intl[*](#special-requirements-for-ecma_intl) |  |  |  |  |  |  |  |  |  | &check; |
 | enchant | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | ev | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | event | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -218,7 +219,7 @@ install-php-extensions @fix_letsencrypt
 | gd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | gearman | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | geoip | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |
-| geos[*](#special-requirements-for-geos) | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |
+| geos[*](#special-requirements-for-geos) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | geospatial | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | gettext | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | gmagick | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -285,6 +286,7 @@ install-php-extensions @fix_letsencrypt
 | recode | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |
 | redis | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | relay |  |  |  |  |  |  | &check; | &check; | &check; | &check; |
+| seasclick | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | seaslog | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | shmop | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | simdjson[*](#special-requirements-for-simdjson) |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -308,6 +310,7 @@ install-php-extensions @fix_letsencrypt
 | sysvsem | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sysvshm | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | tensor[*](#special-requirements-for-tensor) |  |  |  |  | &check; | &check; | &check; | &check; |  |  |
+| tideways | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | tidy | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | timezonedb | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | uopz | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -332,7 +335,7 @@ install-php-extensions @fix_letsencrypt
 | zookeeper | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | zstd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 
-*Number of supported extensions: 138*
+*Number of supported extensions: 141*
 <!-- END OF EXTENSIONS TABLE -->
 
 PS: the pre-installed PHP extensions are excluded from this list.
@@ -419,6 +422,7 @@ Some extensions have special requirements:
 |---|---|
 | <a name="special-requirements-for-cassandra"></a>cassandra | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images<br />&bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `bookworm` docker images |
 | <a name="special-requirements-for-ddtrace"></a>ddtrace | Not available in `jessie` docker images |
+| <a name="special-requirements-for-ecma_intl"></a>ecma_intl | &bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images |
 | <a name="special-requirements-for-geos"></a>geos | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images |
 | <a name="special-requirements-for-lz4"></a>lz4 | Not available in `jessie` docker images |
 | <a name="special-requirements-for-memcached"></a>memcached | Not available in `bookworm` docker images |
