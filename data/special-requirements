@@ -3,7 +3,6 @@ ddtrace !jessie
 ecma_intl !buster !bullseye
 geos !alpine3.9 !alpine3.10
 lz4 !jessie
-memcached !bookworm
 memprof !alpine3.9 !alpine3.10 !alpine3.11 !alpine3.12 !alpine3.13 !alpine3.14 !alpine3.15
 parallel zts
 parle !jessie
@@ -12,5 +11,4 @@ pthreads zts
 simdjson !jessie !stretch
 sodium !jessie
 sqlsrv !7.1-alpine3.9 !7.1-alpine3.10 !arm
-tensor !alpine3.15 !alpine3.16
 vips !alpine3.9 !jessie
