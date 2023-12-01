@@ -96,15 +96,6 @@ install-php-extensions xdebug-^2
 install-php-extensions xdebug-^2.8
 ```
 
-Please remark that with the syntax above you'll get the vary latest compatible version, which may be unstable. In order to install the most recent *stable* version, you can append `@stable`:
-
-```sh
-# Install the most recent STABLE xdebug 3.x version (for example 3.2.2)
-install-php-extensions xdebug-^3@stable
-```
-
-(valid suffixes are: `@snapshot`, `@devel`, `@alpha`, `@beta`, and `@stable`)
-
 Pre-release versions extensions available on `PECL` can be setup by suffixing the extension's name with its state i.e. `alpha`, `beta`, `rc`, `preview`, `devel` or `snapshot`.
 For example:
 
@@ -253,7 +244,7 @@ install-php-extensions @fix_letsencrypt
 | lzf | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | mailparse | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | maxminddb |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| mcrypt | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |
+| mcrypt | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | memcache | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | memcached | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | memprof[*](#special-requirements-for-memprof) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -327,9 +318,8 @@ install-php-extensions @fix_letsencrypt
 | uuid | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | uv |  |  |  |  |  |  |  | &check; | &check; | &check; | &check; |
 | vips[*](#special-requirements-for-vips) |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| vld | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | wddx | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |
-| xdebug | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| xdebug | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |
 | xdiff | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xhprof | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xlswriter |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -345,7 +335,7 @@ install-php-extensions @fix_letsencrypt
 | zookeeper | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |
 | zstd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 
-*Number of supported extensions: 142*
+*Number of supported extensions: 141*
 <!-- END OF EXTENSIONS TABLE -->
 
 PS: the pre-installed PHP extensions are excluded from this list.
