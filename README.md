@@ -226,7 +226,7 @@ install-php-extensions @fix_letsencrypt
 | ffi |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; |
 | ftp |  |  |  |  |  |  |  |  |  | &check; | &check; |
 | gd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| gearman | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |
+| gearman | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | geoip | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |
 | geos[*](#special-requirements-for-geos) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | geospatial | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -264,6 +264,7 @@ install-php-extensions @fix_letsencrypt
 | mssql | &check; | &check; |  |  |  |  |  |  |  |  |  |
 | mysql | &check; | &check; |  |  |  |  |  |  |  |  |  |
 | mysqli | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| newrelic |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | oauth | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | oci8 | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | odbc | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -308,7 +309,7 @@ install-php-extensions @fix_letsencrypt
 | sockets | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sodium[*](#special-requirements-for-sodium) |  | &check; | &check; | &check; |  |  |  |  |  |  |  |
 | solr | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| sourceguardian | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |
+| sourceguardian | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | spx | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sqlsrv[*](#special-requirements-for-sqlsrv) |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | ssh2 | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -330,6 +331,7 @@ install-php-extensions @fix_letsencrypt
 | vips[*](#special-requirements-for-vips) |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | vld | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | wddx | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |
+| wikidiff2[*](#special-requirements-for-wikidiff2) |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xdebug | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xdiff | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xhprof | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -346,7 +348,7 @@ install-php-extensions @fix_letsencrypt
 | zookeeper | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |
 | zstd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 
-*Number of supported extensions: 144*
+*Number of supported extensions: 146*
 <!-- END OF EXTENSIONS TABLE -->
 
 PS: the pre-installed PHP extensions are excluded from this list.
@@ -409,6 +411,7 @@ Here's the list of all the supported environment variables:
 | | `IPE_DEBUG=1` | By setting this environment variable, the script will print all the commands it executes (it will be very verbose, useful only for debug purposes) |
 | | `IPE_PROCESSOR_COUNT` | By default all available processors. Set this environment variable to override the number of processors detected by the script (used for parallel compilation) |
 | | `IPE_DONT_ENABLE=1` | By default the script will install and enable the extensions.<br />If you want to only install them (without enabling them) you can set this environment variable.<br />To enable the extensions at a later time you can execute the command `docker-php-ext-enable-<extension>` (for example: `docker-php-ext-enable-xdebug`).<br />**Beware**: installing some PHP extensions requires that other PHP extensions are already enabled, so use this feature wisely. |
+| | `IPE_SKIP_CHECK=1` | By default the script will check if the extensions can be enabled: if you want to skip this check, you can use this flag.<br />**Beware**: extensions may be enabled even if they break PHP: use this function wisely. |
 | | `IPE_KEEP_SYSPKG_CACHE=1` | By default the script will clear the apt/apk/pear cache in order to save disk space. You can disable it by setting this environment variable |
 | lzf | `IPE_LZF_BETTERCOMPRESSION=1` | By default `install-php-extensions` compiles the `lzf` extension to prefer speed over size; you can use this environment variable to compile it preferring size over speed |
 | event | `IPE_EVENT_NAMESPACE=`... | By default, the `event` classes are defined in the root namespace. You can use this environment variable to specify a custom namespace |
@@ -417,6 +420,8 @@ Here's the list of all the supported environment variables:
 | http, intl, mongodb | `IPE_ICU_EN_ONLY=1` | Some extensions require the ICU library, use this flag to install a smaller, but English-only, ICU library on Alpine 3.16 and later |
 | pspell | `IPE_ASPELL_LANGUAGES='...'` | Configure the languages to be made available (for example: `IPE_ASPELL_LANGUAGES='en fr'`). If omitted, we'll assume `en` |
 | | `IPE_DEB_ARCHIVE` & `IPE_DEB_ARCHIVE_SECURITY` | The APT packages of very old Debian versions (eg Jessie) may have been archived: you can use these environment variables to specify custom URLs of these APT archives |
+| newrelic | `IPE_NEWRELIC_DAEMON=1` | Install the NewRelic daemon  |
+| newrelic | `NR_INSTALL_KEY` | Your New Relic license key |
 
 ## Special requirements
 
@@ -447,6 +452,7 @@ Some extensions have special requirements:
 | <a name="special-requirements-for-sodium"></a>sodium | Not available in `jessie` docker images |
 | <a name="special-requirements-for-sqlsrv"></a>sqlsrv | &bull; Not available in `7.1-alpine3.9` docker images<br />&bull; Not available in `7.1-alpine3.10` docker images<br />&bull; Not available in ARM architectures |
 | <a name="special-requirements-for-vips"></a>vips | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `jessie` docker images |
+| <a name="special-requirements-for-wikidiff2"></a>wikidiff2 | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images |
 <!-- END OF SPECIAL REQUIREMENTS -->
 
 ### How do I know which Linux distribution I am using?
