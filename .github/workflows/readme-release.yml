@@ -153,7 +153,9 @@ jobs:
             RELEASE_NOTES='First version'
           else
             printf 'Generating release notes for commits between %s and %s\n' "$VERSIONTAG_PREVIOUS" "$VERSIONTAG_THIS"
-            RELEASE_NOTES="$(git log --format='- %s' --no-merges --reverse "refs/tags/$VERSIONTAG_PREVIOUS...refs/tags/$VERSIONTAG_THIS" -- ./install-php-extensions ./Dockerfile | grep -vE '^- \[minor\]')"
+            if ! RELEASE_NOTES="$(git log --format='- %s' --no-merges --reverse "refs/tags/$VERSIONTAG_PREVIOUS...refs/tags/$VERSIONTAG_THIS" -- ./install-php-extensions ./Dockerfile | grep -vE '^- \[minor\]')"; then
+              RELEASE_NOTES=
+            fi
           fi
           printf 'Release notes:\n%s\n' "$RELEASE_NOTES"
           printf 'RELEASE_NAME=v%s\n' "$VERSIONTAG_THIS" >> "$GITHUB_ENV"
@@ -170,19 +172,53 @@ jobs:
           username: mlocati
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Build docker image
+        name: Login to GitHub Container Registry
         if: env.VERSIONTAG_THIS != ''
-        run: >
-          docker build
-          --tag "mlocati/php-extension-installer:$VERSIONTAG_THIS"
-          --tag "mlocati/php-extension-installer:${VERSIONTAG_THIS%.*}"
-          --tag "mlocati/php-extension-installer:${VERSIONTAG_THIS%%.*}"
-          --tag mlocati/php-extension-installer:latest
-          .
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       -
-        name: Push docker image to Docker Hub
+        name: Set up docker buildx
         if: env.VERSIONTAG_THIS != ''
-        run: docker push --all-tags mlocati/php-extension-installer
+        uses: docker/setup-buildx-action@v2
+        with:
+          install: true
+      -
+        name: Define versions
+        if: env.VERSIONTAG_THIS != ''
+        id: define-versions
+        run: |
+          printf 'mayor-minor-patch=%s\n' "$VERSIONTAG_THIS" >>"$GITHUB_OUTPUT"
+          printf 'mayor-minor=%s\n' "${VERSIONTAG_THIS%.*}" >>"$GITHUB_OUTPUT"
+          printf 'mayor=%s\n' "${VERSIONTAG_THIS%%.*}" >>"$GITHUB_OUTPUT"
+      -
+        name: Build and push docker image
+        if: env.VERSIONTAG_THIS != ''
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            mlocati/php-extension-installer:${{ steps.define-versions.outputs.mayor-minor-patch }}
+            ghcr.io/mlocati/php-extension-installer:${{ steps.define-versions.outputs.mayor-minor-patch }}
+            mlocati/php-extension-installer:${{ steps.define-versions.outputs.mayor-minor }}
+            ghcr.io/mlocati/php-extension-installer:${{ steps.define-versions.outputs.mayor-minor }}
+            mlocati/php-extension-installer:${{ steps.define-versions.outputs.mayor }}
+            ghcr.io/mlocati/php-extension-installer:${{ steps.define-versions.outputs.mayor }}
+            mlocati/php-extension-installer:latest
+            ghcr.io/mlocati/php-extension-installer:latest
+          # Build for all platforms also supported by php images (https://hub.docker.com/_/php/tags)
+          platforms: |
+              linux/386
+              linux/amd64
+              linux/arm/v5
+              linux/arm/v7
+              linux/arm64/v8
+              linux/mips64le
+              linux/ppc64le
+              linux/s390x
       -
         name: Create release
         if: env.VERSIONTAG_THIS != ''
