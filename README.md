@@ -275,6 +275,7 @@ install-php-extensions @fix_letsencrypt
 | mailparse | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | maxminddb | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |
 | mcrypt |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| md4c | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |  |
 | memcache | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | memcached | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | memprof[*](#special-requirements-for-memprof) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -296,7 +297,7 @@ install-php-extensions @fix_letsencrypt
 | parallel[*](#special-requirements-for-parallel) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |
 | parle[*](#special-requirements-for-parle) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | pcntl | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| pcov |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
+| pcov | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | pdo_dblib | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | pdo_firebird | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | pdo_mysql | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -319,7 +320,7 @@ install-php-extensions @fix_letsencrypt
 | rdkafka | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | recode |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; |
 | redis | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| relay |  | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |
+| relay | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |
 | saxon[*](#special-requirements-for-saxon) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | seasclick | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | seaslog |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -338,7 +339,7 @@ install-php-extensions @fix_letsencrypt
 | sqlsrv[*](#special-requirements-for-sqlsrv) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | ssh2 | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | stomp | &check; | &check; | &check; |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| swoole |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| swoole | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sybase_ct |  |  |  |  |  |  |  |  |  |  | &check; | &check; |
 | sync | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sysvmsg | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -373,7 +374,7 @@ install-php-extensions @fix_letsencrypt
 | zookeeper |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | zstd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 
-*Number of supported extensions: 151*
+*Number of supported extensions: 152*
 <!-- END OF EXTENSIONS TABLE -->
 
 PS: the pre-installed PHP extensions are excluded from this list.
