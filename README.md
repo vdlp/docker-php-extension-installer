@@ -247,7 +247,7 @@ install-php-extensions @fix_letsencrypt
 | ffi | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |
 | ftp | &check; | &check; | &check; |  |  |  |  |  |  |  |  |  |
 | gd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| gearman |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| gearman | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | geoip |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | geos[*](#special-requirements-for-geos) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | geospatial | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -286,7 +286,7 @@ install-php-extensions @fix_letsencrypt
 | mssql |  |  |  |  |  |  |  |  |  |  | &check; | &check; |
 | mysql |  |  |  |  |  |  |  |  |  |  | &check; | &check; |
 | mysqli | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| newrelic |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
+| newrelic | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | oauth | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | oci8 | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | odbc | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -333,7 +333,7 @@ install-php-extensions @fix_letsencrypt
 | soap | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sockets | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sodium[*](#special-requirements-for-sodium) |  |  |  |  |  |  |  |  | &check; | &check; | &check; |  |
-| solr |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| solr | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sourceguardian |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | spx | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sqlsrv[*](#special-requirements-for-sqlsrv) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
@@ -371,7 +371,7 @@ install-php-extensions @fix_letsencrypt
 | zephir_parser | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | zip | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | zmq | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| zookeeper |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| zookeeper | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | zstd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 
 *Number of supported extensions: 152*
@@ -449,6 +449,7 @@ Here's the list of all the supported environment variables:
 | newrelic | `IPE_NEWRELIC_DAEMON=1` | Install the NewRelic daemon  |
 | newrelic | `IPE_NEWRELIC_KEEPLOG=1` | Keep the log files of NewRelic setup (`/tmp/nrinstall-….tar`)  |
 | newrelic | `NR_INSTALL_KEY` | Your New Relic license key |
+| swoole | `IPE_SWOOLE_WITHOUT_IOURING=1` | The io_uring kernel functionality is considered unsafe by security experts (see [here](https://security.googleblog.com/2023/06/learnings-from-kctf-vrps-42-linux.html) and [here](https://i.blackhat.com/BH-US-23/Presentations/US-23-Lin-bad_io_uring.pdf)). By default Swoole 6 and later is configured with io_uring support, use this environment variable to skip configuring io_uring |
 
 ## Special requirements
 
