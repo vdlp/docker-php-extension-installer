@@ -2440,7 +2440,7 @@ isFirebirdInstalled() {
 installFirebird() {
 	printf 'Installing firebird\n'
 	if test $PHP_MAJMIN_VERSION -ge 804; then
-		installFirebird_src="$(getPackageSource https://github.com/FirebirdSQL/firebird/releases/download/v5.0.1/Firebird-5.0.1.1469-0-source.tar.xz)"
+		installFirebird_src="$(getPackageSource https://github.com/FirebirdSQL/firebird/releases/download/v5.0.2/Firebird-5.0.2.1613-0-source.tar.xz)"
 		cd -- "$installFirebird_src"
 		./configure --enable-client-only
 		make -j$(getProcessorCount)
@@ -2545,30 +2545,41 @@ actuallyInstallComposer() {
 
 # Install ionCube Loader
 installIonCubeLoader() {
+	installIonCubeLoader_version=''
+	if test $PHP_MAJMIN_VERSION -lt 804; then
+		# For 14.4.0 we have a Segmentation Fault
+		installIonCubeLoader_version=14.0.0
+	fi
+	installIonCubeLoader_versionForUrl=''
+	installIonCubeLoader_versionForMessage=latest
+	if test -n "$installIonCubeLoader_version"; then
+		installIonCubeLoader_versionForUrl="_$installIonCubeLoader_version"
+		installIonCubeLoader_versionForMessage="v$installIonCubeLoader_version"
+	fi
 	# See https://www.ioncube.com/loaders.php
 	case $PHP_BITS in
 		32)
 			case $(uname -m) in
 				aarch* | arm*)
-					installIonCubeLoader_url="https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l.tar.gz"
+					installIonCubeLoader_url="https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l$installIonCubeLoader_versionForUrl.tar.gz"
 					;;
 				*)
-					installIonCubeLoader_url="https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86.tar.gz"
+					installIonCubeLoader_url="https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86$installIonCubeLoader_versionForUrl.tar.gz"
 					;;
 			esac
 			;;
 		*)
 			case $(uname -m) in
 				aarch64 | arm64 | armv8)
-					installIonCubeLoader_url="https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_aarch64.tar.gz"
+					installIonCubeLoader_url="https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_aarch64$installIonCubeLoader_versionForUrl.tar.gz"
 					;;
 				*)
-					installIonCubeLoader_url="https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz"
+					installIonCubeLoader_url="https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64$installIonCubeLoader_versionForUrl.tar.gz"
 					;;
 			esac
 			;;
 	esac
-	printf 'Downloading ionCube Loader... '
+	printf 'Downloading ionCube Loader (%s)... ' "$installIonCubeLoader_versionForMessage"
 	installIonCubeLoader_dir="$(getPackageSource $installIonCubeLoader_url)"
 	echo 'done.'
 	installIonCubeLoader_so=$(php -r "printf('ioncube_loader_lin_%s.%s%s.so', PHP_MAJOR_VERSION, PHP_MINOR_VERSION, ZEND_THREAD_SAFE ? '_ts' : '');")
@@ -3347,7 +3358,7 @@ installRemoteModule() {
 					git submodule update -q
 					mkdir -p build
 					cd build
-					cmake -DCMAKE_BUILD_TYPE=Release .. -Wno-dev
+					CFLAGS='-Wno-incompatible-pointer-types -Wno-stringop-overflow -Wno-discarded-qualifiers' cmake -DCMAKE_BUILD_TYPE=Release .. -Wno-dev
 					make clean
 					make -j$(getProcessorCount) install
 				)
@@ -3499,6 +3510,8 @@ installRemoteModule() {
 					installRemoteModule_version=1.11.1
 				elif test $PHP_MAJMIN_VERSION -le 703; then
 					installRemoteModule_version=1.16.2
+				elif test $PHP_MAJMIN_VERSION -le 800; then
+					installRemoteModule_version=1.20.1
 				fi
 			fi
 			if test -z "$installRemoteModule_version" || test $(compareVersions "$installRemoteModule_version" 1.17.0) -ge 0; then
@@ -3568,6 +3581,8 @@ installRemoteModule() {
 					installRemoteModule_version=4.10.0
 				elif test $PHP_MAJMIN_VERSION -lt 801; then
 					installRemoteModule_version=22.0.0
+				elif test $PHP_MAJMIN_VERSION -lt 802; then
+					installRemoteModule_version=22.1.2
 				fi
 			else
 				installRemoteModule_version="$(resolvePeclStabilityVersion "$installRemoteModule_module" "$installRemoteModule_version")"
@@ -3663,6 +3678,11 @@ installRemoteModule() {
 				addConfigureOption enable-swoole-curl yes
 			fi
 			;;
+		operator)
+			if test -z "$installRemoteModule_version"; then
+				installRemoteModule_version=beta
+			fi
+			;;
 		parallel)
 			if test -z "$installRemoteModule_version"; then
 				if test $PHP_MAJMIN_VERSION -le 701; then
@@ -3701,6 +3721,7 @@ installRemoteModule() {
 					installRemoteModule_version=5.4.0
 				fi
 			fi
+			installRemoteModule_cppflags='-Wno-incompatible-pointer-types'
 			;;
 		php_trie)
 			if ! test -f /usr/local/include/hat-trie/include/tsl/htrie_map.h; then
@@ -3928,6 +3949,9 @@ installRemoteModule() {
 				fi
 			fi
 			;;
+		seaslog)
+			installRemoteModule_cppflags='-Wno-incompatible-pointer-types'
+			;;
 		smbclient)
 			if test -z "$installRemoteModule_version"; then
 				if test $PHP_MAJMIN_VERSION -le 506; then
@@ -3956,6 +3980,8 @@ installRemoteModule() {
 				if test -z "$installRemoteModule_version"; then
 					if test $PHP_MAJMIN_VERSION -le 800; then
 						installRemoteModule_version=0.9.0
+					elif test $PHP_MAJMIN_VERSION -le 801; then
+						installRemoteModule_version=0.10.0
 					else
 						installRemoteModule_version=0.11.0
 					fi
@@ -4107,12 +4133,6 @@ installRemoteModule() {
 					fi
 					;;
 			esac
-			if test $PHP_MAJMIN_VERSION -ge 800; then
-				# see https://github.com/swoole/swoole-src/issues/5365
-				installRemoteModule_curl=no
-			else
-				installRemoteModule_curl=yes
-			fi
 			if test $PHP_THREADSAFE -eq 1; then
 				installRemoteModule_zts=yes
 			else
@@ -4120,6 +4140,7 @@ installRemoteModule() {
 			fi
 			installRemoteModule_sqlite=yes
 			installRemoteModule_iouring=no
+			installRemoteModule_curl=yes
 			case "$DISTRO" in
 				alpine)
 					if test $DISTRO_MAJMIN_VERSION -lt 317; then
@@ -4138,6 +4159,10 @@ installRemoteModule() {
 					esac
 					;;
 				debian)
+					if test $PHP_MAJMIN_VERSION -ge 800; then
+						# see https://github.com/swoole/swoole-src/issues/5365
+						installRemoteModule_curl=no
+					fi
 					if test $DISTRO_MAJMIN_VERSION -lt 1200; then
 						# we need sqlite3 >= 3.7.7
 						installRemoteModule_sqlite=no
@@ -4380,6 +4405,7 @@ installRemoteModule() {
 			fi
 			;;
 		tensor)
+			installRemoteModule_cppflags='-Wno-incompatible-pointer-types'
 			if test -z "$installRemoteModule_version"; then
 				if test $PHP_MAJMIN_VERSION -le 703; then
 					installRemoteModule_version=2.2.3
@@ -4447,6 +4473,7 @@ installRemoteModule() {
 			installRemoteModule_manuallyInstalled=1
 			;;
 		uopz)
+			installRemoteModule_cppflags='-Wno-incompatible-pointer-types'
 			if test -z "$installRemoteModule_version"; then
 				if test $PHP_MAJMIN_VERSION -le 506; then
 					installRemoteModule_version=2.0.7
@@ -4562,6 +4589,17 @@ installRemoteModule() {
 			if test -z "$installRemoteModule_version" || test $(compareVersions "$installRemoteModule_version" 1.2.7) -ge 0; then
 				# enable reader supports?
 				addConfigureOption enable-reader yes
+			fi
+			;;
+		xmldiff)
+			installRemoteModule_version="$(resolvePeclStabilityVersion "$installRemoteModule_module" "$installRemoteModule_version")"
+			if test -z "$installRemoteModule_version"; then
+				case "$DISTRO_VERSION" in
+					debian@8)
+						# The gcc version of Debian Jessie is too old => error: 'nullptr' was not declared in this scope
+						installRemoteModule_version=1.1.4
+						;;
+				esac
 			fi
 			;;
 		xmlrpc)

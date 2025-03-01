@@ -292,8 +292,9 @@ install-php-extensions @fix_letsencrypt
 | odbc | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | opcache | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | opencensus |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
-| openswoole |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |
+| openswoole | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |
 | opentelemetry | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |  |
+| operator | &check; | &check; | &check; |  |  |  |  |  |  |  |  |  |
 | parallel[*](#special-requirements-for-parallel) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |
 | parle[*](#special-requirements-for-parle) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | pcntl | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -334,7 +335,7 @@ install-php-extensions @fix_letsencrypt
 | sockets | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sodium[*](#special-requirements-for-sodium) |  |  |  |  |  |  |  |  | &check; | &check; | &check; |  |
 | solr | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| sourceguardian |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| sourceguardian | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | spx | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sqlsrv[*](#special-requirements-for-sqlsrv) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | ssh2 | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -374,7 +375,7 @@ install-php-extensions @fix_letsencrypt
 | zookeeper | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | zstd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 
-*Number of supported extensions: 152*
+*Number of supported extensions: 153*
 <!-- END OF EXTENSIONS TABLE -->
 
 PS: the pre-installed PHP extensions are excluded from this list.
