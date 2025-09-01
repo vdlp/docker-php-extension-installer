@@ -69,7 +69,7 @@ resetIFS() {
 # Set these variables:
 # - DISTRO containing the distribution name (eg 'alpine', 'debian')
 # - DISTRO_VERSION_NUMBER containing the distribution version (eg '3.14' for Alpine, 11 for Debian)
-# - DISTRO_VERSION containing the distribution name and its version(eg 'alpine@3.14', 'debian@11')
+# - DISTRO_VERSION containing the distribution name and its version (eg 'alpine@3.14', 'debian@11')
 # - DISTRO_MAJMIN_VERSION always containing a number representing the distribution version (eg 314 for Alpine, 1100 for Debian)
 setDistro() {
 	if ! test -r /etc/os-release; then
@@ -150,6 +150,9 @@ normalizePHPModuleName() {
 			if test $PHP_MAJMIN_VERSION -ge 700; then
 				normalizePHPModuleName_name='sodium'
 			fi
+			;;
+		saxonc)
+			normalizePHPModuleName_name=saxon
 			;;
 		sodium)
 			if test $PHP_MAJMIN_VERSION -lt 700; then
@@ -1017,16 +1020,22 @@ buildRequiredPackageLists() {
 				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile krb5-dev imap-dev $buildRequiredPackageLists_libssldev"
 				;;
 			imap@debian)
-				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent libc-client2007e"
 				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libkrb5-dev"
-				case "$DISTRO_VERSION" in
-					debian@9)
+				if test $DISTRO_VERSION_NUMBER -ge 13; then
+					# Since Debian 13 (trixie) libc-client2007e is no more available
+					buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent sgml-base"
+					if ! isLibcClient2007eInstalled; then
+						COMPILE_LIBS="$COMPILE_LIBS libc-client2007e"
+						buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libpam0g-dev $buildRequiredPackageLists_libssldev"
+					fi
+				else
+					buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent libc-client2007e"
+					if test $DISTRO_VERSION_NUMBER -eq 9; then
 						buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile $buildRequiredPackageLists_libssldev comerr-dev krb5-multidev libc-client2007e libgssrpc4 libkadm5clnt-mit11 libkadm5srv-mit11 libkdb5-8 libpam0g-dev libssl-doc mlock"
-						;;
-					*)
+					else
 						buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libc-client-dev"
-						;;
-				esac
+					fi
+				fi
 				;;
 			interbase@alpine)
 				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile icu-dev ncurses-dev"
@@ -1349,6 +1358,9 @@ buildRequiredPackageLists() {
 				if test $DISTRO_MAJMIN_VERSION -ge 317; then
 					buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent $buildRequiredPackageLists_libssl"
 				fi
+				;;
+			saxon@alpine)
+				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent libstdc++"
 				;;
 			saxon@debian)
 				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_volatile unzip"
@@ -2529,6 +2541,52 @@ installLibenchant1() {
 	cd - >/dev/null
 }
 
+isLibcClient2007eInstalled() {
+	if test -f /usr/lib/libc-client.so.2007e && test -f /usr/include/c-client/utf8.h; then
+		return 0
+	fi
+	return 1
+}
+
+installLibcClient2007e() {
+	mkdir -p /tmp/src
+	installLibcClient2007e_arch="$(dpkg --print-architecture)"
+	# See:
+	# - https://packages.debian.org/bookworm/mlock
+	# - https://packages.debian.org/bookworm/libc-client2007e
+	# - https://packages.debian.org/bookworm/libc-client2007e-dev
+	case "$installLibcClient2007e_arch" in
+		amd64)
+			installLibcClient2007e_version='2007f~dfsg-7+b2'
+			;;
+		*)
+			installLibcClient2007e_version='2007f~dfsg-7+b1'
+			;;
+	esac
+	if ! test -f /usr/bin/mlock; then
+		installLibcClient2007e_url="http://ftp.debian.org/debian/pool/main/u/uw-imap/mlock_${installLibcClient2007e_version}_${installLibcClient2007e_arch}.deb"
+		installLibcClient2007e_deb="$(mktemp -p /tmp/src)"
+		printf '# Installing mlock from %s\n' "$installLibcClient2007e_url"
+		curl -sSLf -o "$installLibcClient2007e_deb" "$installLibcClient2007e_url"
+		dpkg -i "$installLibcClient2007e_deb"
+	fi
+	if ! test -f /usr/lib/libc-client.so.2007e; then
+		installLibcClient2007e_url="http://ftp.debian.org/debian/pool/main/u/uw-imap/libc-client2007e_${installLibcClient2007e_version}_${installLibcClient2007e_arch}.deb"
+		installLibcClient2007e_deb="$(mktemp -p /tmp/src)"
+		printf '# Installing libc-client2007e from %s\n' "$installLibcClient2007e_url"
+		curl -sSLf -o "$installLibcClient2007e_deb" "$installLibcClient2007e_url"
+		dpkg -i "$installLibcClient2007e_deb"
+	fi
+	if ! test -f /usr/include/c-client/utf8.h; then
+		installLibcClient2007e_url="http://ftp.debian.org/debian/pool/main/u/uw-imap/libc-client2007e-dev_${installLibcClient2007e_version}_${installLibcClient2007e_arch}.deb"
+		installLibcClient2007e_deb="$(mktemp -p /tmp/src)"
+		printf '# Installing libc-client2007e-dev from %s\n' "$installLibcClient2007e_url"
+		curl -sSLf -o "$installLibcClient2007e_deb" "$installLibcClient2007e_url"
+		dpkg -i "$installLibcClient2007e_deb"
+		PACKAGES_VOLATILE="$PACKAGES_VOLATILE libc-client2007e-dev"
+	fi
+}
+
 # Install Composer
 installComposer() {
 	installComposer_version="$(getWantedPHPModuleVersion @composer)"
@@ -2704,13 +2762,23 @@ installCargo() {
 	fi
 }
 
+# Install New Relic
+#
+# Arguments:
+#   $1: the version to be installed (optional)
 installNewRelic() {
 	printf '# Installing newrelic\n'
-	# see https://docs.newrelic.com/docs/apm/agents/php-agent/getting-started/php-agent-compatibility-requirements/
-	if test $PHP_MAJMIN_VERSION -le 701; then
-		installNewRelic_baseUrl=https://download.newrelic.com/php_agent/archive/10.21.0.11/
-	else
+	installNewRelic_version="${1:-}"
+	if test -z "$installNewRelic_version"; then
+		# see https://docs.newrelic.com/docs/apm/agents/php-agent/getting-started/php-agent-compatibility-requirements/
+		if test $PHP_MAJMIN_VERSION -le 701; then
+			installNewRelic_version=10.21.0.11
+		fi
+	fi
+	if test -z "$installNewRelic_version"; then
 		installNewRelic_baseUrl=https://download.newrelic.com/php_agent/release/
+	else
+		installNewRelic_baseUrl="https://download.newrelic.com/php_agent/archive/$installNewRelic_version/"
 	fi
 	installNewRelic_search='\bnewrelic-php[0-9.]*-[0-9]+(\.[0-9]+)*-linux'
 	case "$DISTRO" in
@@ -2775,6 +2843,9 @@ compileLibs() {
 	fi
 	if stringInList libenchant1 "$COMPILE_LIBS"; then
 		installLibenchant1
+	fi
+	if stringInList libc-client2007e "$COMPILE_LIBS"; then
+		installLibcClient2007e
 	fi
 }
 
@@ -3336,7 +3407,7 @@ installRemoteModule() {
 			case "$DISTRO" in
 				alpine)
 					if ! test -e /usr/local/include/libgearman/gearman.h || ! test -e /usr/local/lib/libgearman.so; then
-						installRemoteModule_src="$(getPackageSource https://github.com/gearman/gearmand/releases/download/1.1.21/gearmand-1.1.21.tar.gz)"
+						installRemoteModule_src="$(getPackageSource https://github.com/gearman/gearmand/releases/download/1.1.22/gearmand-1.1.22.tar.gz)"
 						cd -- "$installRemoteModule_src"
 						./configure
 						make -j$(getProcessorCount) install-binPROGRAMS
@@ -3660,7 +3731,7 @@ installRemoteModule() {
 			fi
 			;;
 		newrelic)
-			installNewRelic
+			installNewRelic "$installRemoteModule_version"
 			installRemoteModule_manuallyInstalled=2
 			;;
 		oauth)
@@ -4033,38 +4104,63 @@ installRemoteModule() {
 			installRemoteModule_manuallyInstalled=1
 			;;
 		saxon)
+			case "${IPE_SAXON_EDITION:-}" in
+				EE | PE | HE)
+					installRemoteModule_edition=$IPE_SAXON_EDITION
+					;;
+				*)
+					installRemoteModule_edition=EE
+					;;
+			esac
+			case $(uname -m) in
+				aarch64 | arm64 | armv8)
+					installRemoteModule_architecture=linux-aarch64
+					;;
+				*)
+					installRemoteModule_architecture=linux-x86_64
+					;;
+			esac
 			if test -z "$installRemoteModule_version"; then
-				if test $PHP_MAJMIN_VERSION -ge 800; then
-					installRemoteModule_version='12.5.0'
-				else
+				if test $PHP_MAJMIN_VERSION -lt 800; then
 					installRemoteModule_version='12.3'
 				fi
 			fi
-			installRemoteModule_majorVersion="${installRemoteModule_version%%.*}"
-			if test "$installRemoteModule_majorVersion" -ge 12; then
-				case $(uname -m) in
-					aarch64 | arm64 | armv8)
-						installRemoteModule_url=https://downloads.saxonica.com/SaxonC/EE/${installRemoteModule_majorVersion}/libsaxon-EEC-linux-aarch64-v${installRemoteModule_version}.zip
-						;;
-					*)
-						installRemoteModule_url=https://downloads.saxonica.com/SaxonC/EE/${installRemoteModule_majorVersion}/libsaxon-EEC-linux-x86_64-v${installRemoteModule_version}.zip
-						;;
-				esac
+			installRemoteModule_majorVersion=
+			if test -n "$installRemoteModule_version"; then
+				installRemoteModule_majorVersion="${installRemoteModule_version%%.*}"
+				if test "$installRemoteModule_majorVersion" -ge 12; then
+					installRemoteModule_url=https://downloads.saxonica.com/SaxonC/${installRemoteModule_edition}/${installRemoteModule_majorVersion}/libsaxon-${installRemoteModule_edition}C-${installRemoteModule_architecture}-v${installRemoteModule_version}.zip
+				else
+					installRemoteModule_url=https://downloads.saxonica.com/SaxonC/${installRemoteModule_edition}/${installRemoteModule_majorVersion}/libsaxon-${installRemoteModule_edition}C-setup64-v${installRemoteModule_version}.zip
+				fi
 			else
-				installRemoteModule_url=https://downloads.saxonica.com/SaxonC/EE/${installRemoteModule_majorVersion}/libsaxon-EEC-setup64-v${installRemoteModule_version}.zip
+				installRemoteModule_regex="https://downloads.saxonica.com/SaxonC/${installRemoteModule_edition}/[0-9]+/SaxonC${installRemoteModule_edition}-${installRemoteModule_architecture}-[0-9\-]+.zip"
+				installRemoteModule_url="$(curl -sSLf https://www.saxonica.com/download/c.xml | grep -Eo "$installRemoteModule_regex" | head -n 1)"
+				if test $? -ne 0 || test -z "$installRemoteModule_url"; then
+					printf "Failed to determine SaxonC download URL - Nothing matches\n%s\n" "$installRemoteModule_regex"
+					exit 1
+				fi
 			fi
+			printf 'Downloading SaxonC %s from %s\n' "$installRemoteModule_edition" "$installRemoteModule_url"
 			installRemoteModule_dir="$(getPackageSource $installRemoteModule_url)"
 			if ! test -f /usr/lib/libsaxon-*.so; then
-				if test "$installRemoteModule_majorVersion" -ge 12; then
-					cp $installRemoteModule_dir/libs/nix/*.so /usr/lib/
-				else
-					cp $installRemoteModule_dir/*.so /usr/lib/
-				fi
+				installRemoteModule_files="$(find "$installRemoteModule_dir" \( -type f -o -type l \) \( -name 'libsaxonc-*.so*' -o -name 'libsaxon-*.so*' \))"
+				for installRemoteModule_file in $installRemoteModule_files; do
+					cp -P "$installRemoteModule_file" /usr/lib/
+				done
 				ldconfig || true
 			fi
-			cd "$installRemoteModule_dir/Saxon.C.API"
+			installRemoteModule_files="$(find "$installRemoteModule_dir" -type f -name php8_XsltExecutable.cpp)"
+			for installRemoteModule_file in $installRemoteModule_files; do
+				sed -i 's/Z_TYPE_P(val) != NULL/Z_TYPE_P(val) != IS_NULL/g' "$installRemoteModule_file"
+			done
+			if test -d "$installRemoteModule_dir/php/src"; then
+				cd "$installRemoteModule_dir/php/src"
+			else
+				cd "$installRemoteModule_dir/Saxon.C.API"
+			fi
 			phpize
-			./configure --enable-saxon
+			./configure --with-saxon="$installRemoteModule_dir/SaxonC${installRemoteModule_edition}"
 			make -j$(getProcessorCount) install
 			cd - >/dev/null
 			installRemoteModule_manuallyInstalled=1

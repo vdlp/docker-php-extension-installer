@@ -16,7 +16,7 @@ Once this new tag is created automatically (or when maintainers push a new versi
 ### cmark
 
 The `cmark` PHP extension requires the `libcmark` system library.
-It's not available on Debian/Alpine Linux, so we install it maually.
+It's not available on Debian/Alpine Linux, so we install it manually.
 We need to monitor new releases at https://github.com/commonmark/cmark/releases
 
 ### decimal
@@ -98,11 +98,6 @@ We should switch to the stable release once it will be available.
 
 The only available versions of the `parle` PHP extension are all beta.
 We should switch to the stable release once it will be available.
-
-### saxon
-
-The `saxon` PHP extension is not available in the PECL archive, so we install it manually.
-We need to monitor new releases at https://www.saxonica.com/download/c.xml
 
 ### snappy
 

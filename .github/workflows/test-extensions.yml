@@ -40,7 +40,7 @@ jobs:
           cache: false
       -
         name: Install shfmt
-        run: GO111MODULE=on go install mvdan.cc/sh/v3/cmd/shfmt@v3.10.0
+        run: GO111MODULE=on go install mvdan.cc/sh/v3/cmd/shfmt@v3.12.0
       -
         name: Checkout
         uses: actions/checkout@v4
@@ -232,6 +232,44 @@ jobs:
         uses: actions/checkout@v4
       -
         run: IPE_INSTANTCLIENT_BASIC=1 ./install-php-extensions oci8 pdo_oci
+
+  test_saxon:
+    name: Saxon ${{ matrix.edition }} on php:${{ matrix.php-image }}
+    needs:
+      - check_syntax_data
+      - check_syntax_shell
+      - check_syntax_php
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-image:
+          - "7.0-cli"
+          - "7.4-cli"
+          - "8.0-cli"
+          - "8.0-cli-alpine"
+          - "8.4-cli"
+          - "8.4-cli-alpine"
+        edition:
+          - EE
+          - PE
+          - HE
+    steps:
+      -
+        name: Docker pull
+        run: docker pull "php:${{ matrix.php-image }}"
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Install Saxon
+        run: |
+          docker run --rm \
+            --volume "$(pwd):/app" \
+            --workdir /app \
+            --env CI=true \
+            --env IPE_SAXON_EDITION="${{ matrix.edition }}" \
+            "php:${{ matrix.php-image }}" \
+            sh -c './install-php-extensions saxon && ./scripts/tests/saxon'
 
   test_install_fromsource:
     name: Test installing from source

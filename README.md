@@ -115,7 +115,7 @@ install-php-extensions xdebug-^2
 install-php-extensions xdebug-^2.8
 ```
 
-Please remark that with the syntax above you'll get the vary latest compatible version, which may be unstable. In order to install the most recent *stable* version, you can append `@stable`:
+Please remark that with the syntax above you'll get the very latest compatible version, which may be unstable. In order to install the most recent *stable* version, you can append `@stable`:
 
 ```sh
 # Install the most recent STABLE xdebug 3.x version (for example 3.2.2)
@@ -284,7 +284,7 @@ install-php-extensions @fix_letsencrypt
 | http | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | igbinary | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | imagick | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| imap[*](#special-requirements-for-imap) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| imap | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | inotify | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | interbase |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; |
 | intl | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -478,6 +478,7 @@ Here's the list of all the supported environment variables:
 | newrelic | `IPE_NEWRELIC_KEEPLOG=1` | Keep the log files of NewRelic setup (`/tmp/nrinstall-….tar`)  |
 | newrelic | `NR_INSTALL_KEY` | Your New Relic license key |
 | swoole | `IPE_SWOOLE_WITHOUT_IOURING=1` | The io_uring kernel functionality is considered unsafe by security experts (see [here](https://security.googleblog.com/2023/06/learnings-from-kctf-vrps-42-linux.html) and [here](https://i.blackhat.com/BH-US-23/Presentations/US-23-Lin-bad_io_uring.pdf)). By default Swoole 6 and later is configured with io_uring support, use this environment variable to skip configuring io_uring |
+| saxon | `IPE_SAXON_EDITION=EE` | The Saxon edition to be used: `EE` for Enterprise Edition (default), `PE` for Professional Edition, `HE` for Home Edition |
 
 ## Special requirements
 
@@ -497,7 +498,6 @@ Some extensions have special requirements:
 | <a name="special-requirements-for-ddtrace"></a>ddtrace | Not available in `jessie` docker images |
 | <a name="special-requirements-for-ecma_intl"></a>ecma_intl | &bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `trixie` docker images<br />&bull; Not available in `alpine3.22` docker images |
 | <a name="special-requirements-for-geos"></a>geos | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images |
-| <a name="special-requirements-for-imap"></a>imap | Not available in `trixie` docker images |
 | <a name="special-requirements-for-lz4"></a>lz4 | Not available in `jessie` docker images |
 | <a name="special-requirements-for-memprof"></a>memprof | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images<br />&bull; Not available in `alpine3.11` docker images<br />&bull; Not available in `alpine3.12` docker images<br />&bull; Not available in `alpine3.13` docker images<br />&bull; Not available in `alpine3.14` docker images<br />&bull; Not available in `alpine3.15` docker images |
 | <a name="special-requirements-for-parallel"></a>parallel | Requires images with PHP compiled with thread-safety enabled (`zts`) |
@@ -506,7 +506,7 @@ Some extensions have special requirements:
 | <a name="special-requirements-for-pdo_sqlsrv"></a>pdo_sqlsrv | Not available in `trixie` docker images |
 | <a name="special-requirements-for-phpy"></a>phpy | Not available in `buster` docker images |
 | <a name="special-requirements-for-pthreads"></a>pthreads | Requires images with PHP compiled with thread-safety enabled (`zts`) |
-| <a name="special-requirements-for-saxon"></a>saxon | Not available in `alpine` docker images |
+| <a name="special-requirements-for-saxon"></a>saxon | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images<br />&bull; Not available in `alpine3.11` docker images<br />&bull; Not available in `7.2-alpine` docker images<br />&bull; Not available in `7.3-alpine` docker images<br />&bull; Not available in `7.4-alpine` docker images |
 | <a name="special-requirements-for-simdjson"></a>simdjson | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images |
 | <a name="special-requirements-for-sodium"></a>sodium | Not available in `jessie` docker images |
 | <a name="special-requirements-for-sqlsrv"></a>sqlsrv | &bull; Not available in `7.1-alpine3.9` docker images<br />&bull; Not available in `7.1-alpine3.10` docker images<br />&bull; Not available in `trixie` docker images |
