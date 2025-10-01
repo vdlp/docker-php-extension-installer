@@ -74,7 +74,7 @@ RUN ( curl -sSLf https://github.com/mlocati/docker-php-extension-installer/relea
   RUN install-php-extensions gd xdebug
   ```
 
-**Warning**: by using this method you may use an outdated version of the Docker image image.
+**Warning**: by using this method you may use an outdated version of the Docker image.
 You may want to run `docker pull ghcr.io/mlocati/php-extension-installer` or `docker pull mlocati/php-extension-installer` in order to use an up-to-date version.
 
 ### Using the script of a Docker image
@@ -290,6 +290,7 @@ install-php-extensions @fix_letsencrypt
 | intl | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | ion | &check; | &check; | &check; | &check; |  |  |  |  |  |  |  |  |
 | ioncube_loader | &check; | &check; | &check; | &check; |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| ip2location | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |  |
 | jsmin |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | json_post | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | jsonpath | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |
@@ -385,6 +386,7 @@ install-php-extensions @fix_letsencrypt
 | vld | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | wddx |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; |
 | wikidiff2[*](#special-requirements-for-wikidiff2) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |
+| xattr | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xdebug | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xdiff | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xhprof | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -402,7 +404,7 @@ install-php-extensions @fix_letsencrypt
 | zookeeper | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | zstd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 
-*Number of supported extensions: 155*
+*Number of supported extensions: 157*
 <!-- END OF EXTENSIONS TABLE -->
 
 PS: the pre-installed PHP extensions are excluded from this list.
