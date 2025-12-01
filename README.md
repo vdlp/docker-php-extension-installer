@@ -260,7 +260,7 @@ install-php-extensions @fix_letsencrypt
 | cmark |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; |  |  |
 | csv | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |
 | dba | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| ddtrace[*](#special-requirements-for-ddtrace) |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |
+| ddtrace[*](#special-requirements-for-ddtrace) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |
 | decimal | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | ds | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | ecma_intl[*](#special-requirements-for-ecma_intl) |  |  | &check; | &check; |  |  |  |  |  |  |  |  |  |
@@ -282,8 +282,8 @@ install-php-extensions @fix_letsencrypt
 | gnupg | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | grpc |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | http | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| igbinary |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| imagick |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| igbinary | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| imagick | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | imap | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | inotify | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | interbase |  |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -347,8 +347,8 @@ install-php-extensions @fix_letsencrypt
 | raphf | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | rdkafka | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | recode |  |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; |
-| redis |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| relay |  | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |
+| redis | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| relay | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |
 | saxon[*](#special-requirements-for-saxon) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | seasclick | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | seaslog |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -361,7 +361,7 @@ install-php-extensions @fix_letsencrypt
 | soap | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sockets | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sodium[*](#special-requirements-for-sodium) |  |  |  |  |  |  |  |  |  | &check; | &check; | &check; |  |
-| solr |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| solr | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sourceguardian |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | spx | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sqlsrv[*](#special-requirements-for-sqlsrv) |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
