@@ -252,7 +252,7 @@ install-php-extensions @fix_letsencrypt
 | ast | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | bcmath | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | bitset | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| blackfire |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| blackfire | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | brotli | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | bz2 | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | calendar | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -295,7 +295,7 @@ install-php-extensions @fix_letsencrypt
 | json_post | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | jsonpath | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |
 | ldap | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| luasandbox |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| luasandbox | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | lz4[*](#special-requirements-for-lz4) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |
 | lzf | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | mailparse | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -327,12 +327,12 @@ install-php-extensions @fix_letsencrypt
 | pcntl | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | pcov | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | pdo_dblib | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| pdo_firebird[*](#special-requirements-for-pdo_firebird) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| pdo_firebird | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | pdo_mysql | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | pdo_oci |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | pdo_odbc | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | pdo_pgsql | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| pdo_sqlsrv[*](#special-requirements-for-pdo_sqlsrv) |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
+| pdo_sqlsrv |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | pgsql | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | phalcon |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |
 | php_trie |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |
@@ -350,7 +350,7 @@ install-php-extensions @fix_letsencrypt
 | redis | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | relay | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |
 | saxon[*](#special-requirements-for-saxon) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
-| seasclick | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| seasclick[*](#special-requirements-for-seasclick) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | seaslog |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | shmop | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | simdjson[*](#special-requirements-for-simdjson) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |
@@ -362,7 +362,7 @@ install-php-extensions @fix_letsencrypt
 | sockets | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sodium[*](#special-requirements-for-sodium) |  |  |  |  |  |  |  |  |  | &check; | &check; | &check; |  |
 | solr | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| sourceguardian |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| sourceguardian | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | spx | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sqlsrv[*](#special-requirements-for-sqlsrv) |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | ssh2 | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -387,11 +387,11 @@ install-php-extensions @fix_letsencrypt
 | wddx |  |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; |
 | wikidiff2[*](#special-requirements-for-wikidiff2) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |
 | xattr | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| xdebug |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| xdebug | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xdiff | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xhprof | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xlswriter | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
-| xmldiff |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| xmldiff | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xmlrpc | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | xpass[*](#special-requirements-for-xpass) | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |  |
 | xsl | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -408,10 +408,10 @@ install-php-extensions @fix_letsencrypt
 <!-- END OF EXTENSIONS TABLE -->
 
 PS: the pre-installed PHP extensions are excluded from this list.
-You can list them with the following command (change `php:7.2-cli` to reflect the PHP version you are interested in):
+You can list them with the following command (change `php:8.5-cli` to reflect the PHP version you are interested in):
 
 ```
-$ docker run --rm php:7.2-cli php -m
+$ docker run --rm php:8.5-cli php -m
 [PHP Modules]
 Core
 ctype
@@ -420,10 +420,10 @@ date
 dom
 fileinfo
 filter
-ftp
 hash
 iconv
 json
+lexbor
 libxml
 mbstring
 mysqlnd
@@ -433,6 +433,7 @@ PDO
 pdo_sqlite
 Phar
 posix
+random
 readline
 Reflection
 session
@@ -442,12 +443,15 @@ SPL
 sqlite3
 standard
 tokenizer
+uri
 xml
 xmlreader
 xmlwriter
+Zend OPcache
 zlib
 
 [Zend Modules]
+Zend OPcache
 ```
 
 ## Configuration
@@ -498,20 +502,19 @@ Some extensions have special requirements:
 |---|---|
 | <a name="special-requirements-for-cassandra"></a>cassandra | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images<br />&bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `bookworm` docker images<br />&bull; Not available in `trixie` docker images |
 | <a name="special-requirements-for-ddtrace"></a>ddtrace | Not available in `jessie` docker images |
-| <a name="special-requirements-for-ecma_intl"></a>ecma_intl | &bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `trixie` docker images<br />&bull; Not available in `alpine3.22` docker images |
+| <a name="special-requirements-for-ecma_intl"></a>ecma_intl | &bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `trixie` docker images<br />&bull; Not available in `alpine3.22` docker images<br />&bull; Not available in `alpine3.23` docker images |
 | <a name="special-requirements-for-geos"></a>geos | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images |
 | <a name="special-requirements-for-lz4"></a>lz4 | Not available in `jessie` docker images |
 | <a name="special-requirements-for-memprof"></a>memprof | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images<br />&bull; Not available in `alpine3.11` docker images<br />&bull; Not available in `alpine3.12` docker images<br />&bull; Not available in `alpine3.13` docker images<br />&bull; Not available in `alpine3.14` docker images<br />&bull; Not available in `alpine3.15` docker images |
 | <a name="special-requirements-for-parallel"></a>parallel | Requires images with PHP compiled with thread-safety enabled (`zts`) |
 | <a name="special-requirements-for-parle"></a>parle | Not available in `jessie` docker images |
-| <a name="special-requirements-for-pdo_firebird"></a>pdo_firebird | Not available in `alpine3.22` docker images |
-| <a name="special-requirements-for-pdo_sqlsrv"></a>pdo_sqlsrv | Not available in `trixie` docker images |
 | <a name="special-requirements-for-phpy"></a>phpy | Not available in `buster` docker images |
 | <a name="special-requirements-for-pthreads"></a>pthreads | Requires images with PHP compiled with thread-safety enabled (`zts`) |
 | <a name="special-requirements-for-saxon"></a>saxon | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images<br />&bull; Not available in `alpine3.11` docker images<br />&bull; Not available in `7.2-alpine` docker images<br />&bull; Not available in `7.3-alpine` docker images<br />&bull; Not available in `7.4-alpine` docker images |
+| <a name="special-requirements-for-seasclick"></a>seasclick | Not available in `alpine3.23` docker images |
 | <a name="special-requirements-for-simdjson"></a>simdjson | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images |
 | <a name="special-requirements-for-sodium"></a>sodium | Not available in `jessie` docker images |
-| <a name="special-requirements-for-sqlsrv"></a>sqlsrv | &bull; Not available in `7.1-alpine3.9` docker images<br />&bull; Not available in `7.1-alpine3.10` docker images<br />&bull; Not available in `trixie` docker images |
+| <a name="special-requirements-for-sqlsrv"></a>sqlsrv | &bull; Not available in `7.1-alpine3.9` docker images<br />&bull; Not available in `7.1-alpine3.10` docker images |
 | <a name="special-requirements-for-vips"></a>vips | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `jessie` docker images |
 | <a name="special-requirements-for-wikidiff2"></a>wikidiff2 | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images |
 | <a name="special-requirements-for-xpass"></a>xpass | Not available in `buster` docker images |

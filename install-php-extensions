@@ -1783,8 +1783,8 @@ expandPackagesToBeInstalled() {
 			IFS='
 '
 			for expandPackagesToBeInstalled_line in $expandPackagesToBeInstalled_log; do
-				if test -n "$(printf '%s' "$expandPackagesToBeInstalled_line" | grep -E '^\([0-9]*/[0-9]*) Installing ')"; then
-					expandPackagesToBeInstalled_result="$expandPackagesToBeInstalled_result $(printf '%s' "$expandPackagesToBeInstalled_line" | cut -d ' ' -f 3)"
+				if test -n "$(printf '%s' "$expandPackagesToBeInstalled_line" | grep -E '^\( *[0-9]*/[0-9]*) Installing ')"; then
+					expandPackagesToBeInstalled_result="$expandPackagesToBeInstalled_result $(printf '%s' "$expandPackagesToBeInstalled_line" | sed -E 's/^\(.+\) Installing //' | cut -d ' ' -f 1)"
 				fi
 			done
 			resetIFS
@@ -2235,7 +2235,7 @@ installMicrosoftSqlServerODBC() {
 		alpine)
 			rm -rf /tmp/src/msodbcsql.apk
 			if test $PHP_MAJMIN_VERSION -le 703; then
-				curl -sSLf -o /tmp/src/msodbcsql.apk https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.10.6.1-1_amd64.apk
+				installMicrosoftSqlServerODBC_url=https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.10.6.1-1_amd64.apk
 			else
 				case $(uname -m) in
 					aarch64 | arm64 | armv8)
@@ -2245,19 +2245,22 @@ installMicrosoftSqlServerODBC() {
 						installMicrosoftSqlServerODBC_arch=amd64
 						;;
 				esac
-				curl -sSLf -o /tmp/src/msodbcsql.apk https://download.microsoft.com/download/3/5/5/355d7943-a338-41a7-858d-53b259ea33f5/msodbcsql18_18.3.3.1-1_$installMicrosoftSqlServerODBC_arch.apk
+				installMicrosoftSqlServerODBC_url=https://download.microsoft.com/download/9dcab408-e0d4-4571-a81a-5a0951e3445f/msodbcsql18_18.6.1.1-1_$installMicrosoftSqlServerODBC_arch.apk
 			fi
+			printf 'APK package URL: %s\n' "$installMicrosoftSqlServerODBC_url"
+			curl -sSLf -o /tmp/src/msodbcsql.apk "$installMicrosoftSqlServerODBC_url"
 			printf '\n' | apk add --allow-untrusted /tmp/src/msodbcsql.apk
 			rm -rf /tmp/src/msodbcsql.apk
 			;;
 		debian)
 			printf -- '- installing the Microsoft APT key\n'
-			if test $DISTRO_VERSION_NUMBER -eq 11; then
-				curl -sSLf -o /etc/apt/trusted.gpg.d/microsoft.asc https://packages.microsoft.com/keys/microsoft.asc
+			if test $DISTRO_VERSION_NUMBER -ge 13; then
+				curl https://packages.microsoft.com/keys/microsoft-2025.asc | gpg --dearmor --yes --output /usr/share/keyrings/microsoft-prod.gpg
 			elif test $DISTRO_VERSION_NUMBER -ge 12; then
 				curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor --yes --output /usr/share/keyrings/microsoft-prod.gpg
+			elif test $DISTRO_VERSION_NUMBER -ge 11; then
+				curl -sSLf -o /etc/apt/trusted.gpg.d/microsoft.asc https://packages.microsoft.com/keys/microsoft.asc
 			else
-				# apt-key is deprecated
 				curl -sSLf https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 			fi
 			if ! test -f /etc/apt/sources.list.d/mssql-release.list; then
@@ -2497,7 +2500,7 @@ isFirebirdInstalled() {
 installFirebird() {
 	printf 'Installing firebird\n'
 	if test $PHP_MAJMIN_VERSION -ge 804; then
-		installFirebird_src="$(getPackageSource https://github.com/FirebirdSQL/firebird/releases/download/v5.0.2/Firebird-5.0.2.1613-0-source.tar.xz)"
+		installFirebird_src="$(getPackageSource https://github.com/FirebirdSQL/firebird/releases/download/v5.0.3/Firebird-5.0.3.1683-0-source.tar.xz)"
 		cd -- "$installFirebird_src"
 		./configure --enable-client-only
 		make -j$(getProcessorCount)
@@ -2509,8 +2512,13 @@ installFirebird() {
 		cd /tmp/src/firebird
 		# Patch rwlock.h (this has been fixed in later release of firebird 3.x)
 		sed -i '194s/.*/#if 0/' src/common/classes/rwlock.h
-		./configure --with-system-icu
-		# -j option can't be used: make targets must be compiled sequentially
+		if [ "$DISTRO" = alpine ] && [ "$DISTRO_MAJMIN_VERSION" -ge 322 ]; then
+			# Firebird 2.5.x does not support recent ICU versions
+			./configure
+		else
+			./configure --with-system-icu
+		fi
+		# Don't try to enable parallel build: Firebird forces -j1
 		make -s btyacc_binary gpre_boot libfbstatic libfbclient
 		cp gen/firebird/lib/libfbclient.so /usr/lib/
 		ln -s /usr/lib/libfbclient.so /usr/lib/libfbclient.so.2
@@ -2530,7 +2538,7 @@ installLibXCrypt() {
 	installLibXCrypt_version=4.4.36
 	installLibXCrypt_src="$(getPackageSource "https://github.com/besser82/libxcrypt/releases/download/v$installLibXCrypt_version/libxcrypt-$installLibXCrypt_version.tar.xz")"
 	cd -- "$installLibXCrypt_src"
-	./configure --prefix /usr
+	./configure --prefix /usr --disable-werror
 	make -j$(getProcessorCount)
 	make install
 	cd - >/dev/null
@@ -3250,6 +3258,16 @@ installRemoteModule() {
 			cd - >/dev/null
 			installRemoteModule_manuallyInstalled=1
 			installRemoteModule_ini_extra="$(printf '%sblackfire.agent_socket=tcp://blackfire:8307\n' "$installRemoteModule_ini_extra")"
+			;;
+		brotli)
+			if test -z "$installRemoteModule_version"; then
+				case "$DISTRO_VERSION" in
+					debian@8)
+						# In Debian Jessie we have brotli version 0.18.2
+						installRemoteModule_version=0.18.2
+						;;
+				esac
+			fi
 			;;
 		cassandra)
 			installRemoteModule_src="$(getPackageSource https://github.com/nano-interactive/ext-cassandra/tarball/1cf12c5ce49ed43a2c449bee4b7b23ce02a37bf0)"
@@ -4246,7 +4264,7 @@ installRemoteModule() {
 					elif test $PHP_MAJMIN_VERSION -le 801; then
 						installRemoteModule_version=0.10.0
 					else
-						installRemoteModule_version=0.11.0
+						installRemoteModule_version=0.12.0
 					fi
 				fi
 				installRemoteModule_src="$(getPackageSource https://codeload.github.com/jvoisin/snuffleupagus/tar.gz/v$installRemoteModule_version)"
