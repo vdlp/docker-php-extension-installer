@@ -758,6 +758,7 @@ buildRequiredPackageLists() {
 						;;
 				esac
 			fi
+			buildRequiredPackageLists_libpcredev=pcre-dev
 			;;
 		debian@*)
 			case "$buildRequiredPackageLists_sslLib" in
@@ -779,6 +780,11 @@ buildRequiredPackageLists() {
 					exit 1
 					;;
 			esac
+			if test $DISTRO_VERSION_NUMBER -ge 13; then
+				buildRequiredPackageLists_libpcredev=libpcre2-dev
+			else
+				buildRequiredPackageLists_libpcredev=libpcre3-dev
+			fi
 			;;
 	esac
 	if test $USE_PICKLE -gt 1; then
@@ -819,11 +825,11 @@ buildRequiredPackageLists() {
 				;;
 			ddtrace@alpine)
 				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent libgcc"
-				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile curl-dev"
+				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile curl-dev automake libtool"
 				;;
 			ddtrace@debian)
 				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent $buildRequiredPackageLists_libssl"
-				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libcurl4-openssl-dev"
+				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libcurl4-openssl-dev automake libtool"
 				;;
 			dba@alpine)
 				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent db"
@@ -1071,7 +1077,7 @@ buildRequiredPackageLists() {
 				;;
 			imagick@debian)
 				if test $DISTRO_VERSION_NUMBER -ge 13; then
-					buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent ^libmagickwand-7.q16-[0-9]+$ ^libmagickcore-7.q16-[0-9]+-extra$"
+					buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent ^libmagickwand-7.q16-[0-9]+$ ^libmagickcore-7.q16-[0-9]+-extra$ libheif-plugin-aomenc"
 				else
 					buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent ^libmagickwand-6.q16-[0-9]+$ ^libmagickcore-6.q16-[0-9]+-extra$"
 				fi
@@ -1269,16 +1275,12 @@ buildRequiredPackageLists() {
 				;;
 			oauth@alpine)
 				if test $PHP_MAJMIN_VERSION -ge 700; then
-					buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile pcre-dev"
+					buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile $buildRequiredPackageLists_libpcredev"
 				fi
 				;;
 			oauth@debian)
 				if test $PHP_MAJMIN_VERSION -ge 700; then
-					if test $DISTRO_VERSION_NUMBER -ge 13; then
-						buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libpcre2-dev"
-					else
-						buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libpcre3-dev"
-					fi
+					buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile $buildRequiredPackageLists_libpcredev"
 				fi
 				;;
 			oci8@alpine | pdo_oci@alpine)
@@ -1442,6 +1444,14 @@ buildRequiredPackageLists() {
 					buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile liblz4-dev"
 				fi
 				;;
+			rrd@alpine)
+				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent librrd"
+				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile rrdtool-dev"
+				;;
+			rrd@debian)
+				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile librrd-dev"
+				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent ^librrd[0-9]*$"
+				;;
 			relay@alpine)
 				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent lz4-libs zstd-libs"
 				if test $DISTRO_MAJMIN_VERSION -ge 317; then
@@ -1486,14 +1496,10 @@ buildRequiredPackageLists() {
 				;;
 			snuffleupagus@alpine)
 				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent pcre"
-				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile pcre-dev"
+				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile $buildRequiredPackageLists_libpcredev"
 				;;
 			snuffleupagus@debian)
-				if test $DISTRO_VERSION_NUMBER -ge 13; then
-					buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libpcre2-dev"
-				else
-					buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libpcre3-dev"
-				fi
+				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile $buildRequiredPackageLists_libpcredev"
 				;;
 			soap@alpine)
 				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libxml2-dev"
@@ -1551,6 +1557,14 @@ buildRequiredPackageLists() {
 				;;
 			ssh2@debian)
 				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libssh2-1-dev"
+				;;
+			statgrab@alpine)
+				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent libstatgrab"
+				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libstatgrab-dev"
+				;;
+			statgrab@debian)
+				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent ^libstatgrab[0-9]*$"
+				buildRequiredPackageLists_volatile="$buildRequiredPackageLists_volatile libstatgrab-dev"
 				;;
 			stomp@alpine)
 				buildRequiredPackageLists_persistent="$buildRequiredPackageLists_persistent $buildRequiredPackageLists_libssl"
@@ -2498,7 +2512,9 @@ installLibavif() {
 
 # Install libmpdec
 installLibMPDec() {
-	installLibMPDec_src="$(getPackageSource https://www.bytereef.org/software/mpdecimal/releases/mpdecimal-2.5.1.tar.gz)"
+	installLibMPDec_version=4.0.1
+	printf '# Installing libmpdec v%s\n' "$installLibMPDec_version"
+	installLibMPDec_src="$(getPackageSource https://www.bytereef.org/software/mpdecimal/releases/mpdecimal-$installLibMPDec_version.tar.gz)"
 	cd -- "$installLibMPDec_src"
 	./configure --disable-cxx
 	make -j$(getProcessorCount)
@@ -3470,6 +3486,11 @@ installRemoteModule() {
 					fi
 					;;
 			esac
+			if test -z "$installRemoteModule_version"; then
+				if test $PHP_MAJMIN_VERSION -lt 802; then
+					installRemoteModule_version=1.5.1
+				fi
+			fi
 			;;
 		ds)
 			if test -z "$installRemoteModule_version"; then
@@ -3477,6 +3498,8 @@ installRemoteModule() {
 					installRemoteModule_version=1.3.0
 				elif test $PHP_MAJMIN_VERSION -lt 704; then
 					installRemoteModule_version=1.4.0
+				elif test $PHP_MAJMIN_VERSION -lt 802; then
+					installRemoteModule_version=1.6.0
 				fi
 			fi
 			;;
@@ -3574,6 +3597,11 @@ installRemoteModule() {
 					installRemoteModule_version=1.1.2
 				elif test $PHP_MAJMIN_VERSION -le 700; then
 					installRemoteModule_version=2.1.3
+				elif test $PHP_MAJMIN_VERSION -le 701; then
+					installRemoteModule_version=2.1.4
+				elif test $DISTRO_VERSION_NUMBER -eq 10 && { test $PHP_MAJMIN_VERSION -eq 801 || test $PHP_MAJMIN_VERSION -eq 802; }; then
+					# I don't know why on Debian Buster sometimes we have "undefined symbol: zif_gearman_client_set_ssl"
+					installRemoteModule_version=2.1.4
 				fi
 			fi
 			case "$DISTRO" in
@@ -4095,6 +4123,8 @@ installRemoteModule() {
 					installRemoteModule_version=4.1.2
 				elif test $PHP_MAJMIN_VERSION -lt 800; then
 					installRemoteModule_version=5.4.0
+				elif test $PHP_MAJMIN_VERSION -lt 801; then
+					installRemoteModule_version=5.10.0
 				fi
 			fi
 			installRemoteModule_cppflags='-Wno-incompatible-pointer-types'
@@ -4266,11 +4296,9 @@ installRemoteModule() {
 					fi
 					;;
 				debian)
-					case "$(dpkg -l 'libssl*' | grep -E '^ii ' | cut -d' ' -f3)" in
-						libssl3*)
-							installRemoteModule_flags=+libssl3
-							;;
-					esac
+					if dpkg -l 'libssl*' | grep -E '^ii ' | cut -d' ' -f3 | grep -q '^libssl3'; then
+						installRemoteModule_flags=+libssl3
+					fi
 					;;
 			esac
 			# See https://relay.so/builds
@@ -4278,10 +4306,22 @@ installRemoteModule() {
 			printf 'Downloading relay v%s (%s) from %s... ' "$installRemoteModule_version" "$installRemoteModule_hardware" "$installRemoteModule_url"
 			installRemoteModule_src="$(getPackageSource $installRemoteModule_url)"
 			echo 'done.'
-			cp -- "$installRemoteModule_src/relay-pkg.so" "$PHP_EXTDIR/relay.so"
+			if test $PHP_THREADSAFE -eq 1; then
+				cp -- "$installRemoteModule_src/relay-zts.so" "$PHP_EXTDIR/relay.so"
+			else
+				cp -- "$installRemoteModule_src/relay-pkg.so" "$PHP_EXTDIR/relay.so"
+			fi
 			sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXTDIR/relay.so"
 			installRemoteModule_ini_extra="$(grep -vE '^[ \t]*extension[ \t]*=' $installRemoteModule_src/relay.ini)"
 			installRemoteModule_manuallyInstalled=1
+			;;
+		rrd)
+			installRemoteModule_cppflags='-Wno-incompatible-pointer-types'
+			if test -z "$installRemoteModule_version"; then
+				if test $PHP_MAJMIN_VERSION -lt 700; then
+					installRemoteModule_version=1.1.3
+				fi
+			fi
 			;;
 		saxon)
 			case "${IPE_SAXON_EDITION:-}" in
@@ -4502,6 +4542,15 @@ installRemoteModule() {
 			if test -z "$installRemoteModule_version"; then
 				if test $PHP_MAJMIN_VERSION -le 506; then
 					installRemoteModule_version=0.13
+				elif test $PHP_MAJMIN_VERSION -le 704; then
+					installRemoteModule_version=1.4.1
+				fi
+			fi
+			;;
+		statgrab)
+			if test -z "$installRemoteModule_version"; then
+				if test $PHP_MAJMIN_VERSION -le 704; then
+					installRemoteModule_version=0.6.0
 				fi
 			fi
 			;;
@@ -4524,7 +4573,12 @@ installRemoteModule() {
 				elif test $PHP_MAJMIN_VERSION -le 504; then
 					installRemoteModule_version=2.0.4
 				elif test $PHP_MAJMIN_VERSION -le 506; then
-					installRemoteModule_version=2.0.11
+					# Using 2.0.11 when libpcre-dev is installed causes a Segmentation fault in php 5 (see https://github.com/mlocati/docker-php-extension-installer/issues/1282)
+					if test "$DISTRO" = debian && { dpkg -l 'libpcre*-dev' 2>/dev/null | grep -Eq '^ii'; }; then
+						installRemoteModule_version=2.0.10
+					else
+						installRemoteModule_version=2.0.11
+					fi
 				elif test $PHP_MAJMIN_VERSION -le 700; then
 					installRemoteModule_version=4.3.6
 				elif test $PHP_MAJMIN_VERSION -le 701; then
