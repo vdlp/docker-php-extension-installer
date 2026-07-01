@@ -1,6 +1,6 @@
 cassandra !jessie !stretch !buster !bullseye !bookworm !trixie
 ddtrace !jessie
-ecma_intl !buster !bullseye !trixie !alpine3.22 !alpine3.23
+ecma_intl !buster !bullseye !trixie !alpine3.22 !alpine3.23 !alpine3.24
 geos !alpine3.9 !alpine3.10
 judy !alpine3.13 !alpine3.14 !alpine3.15
 lz4 !jessie
@@ -11,11 +11,12 @@ pdo_snowflake !alpine
 phpy !buster
 pthreads zts
 saxon !alpine3.7 !alpine3.8 !alpine3.9 !alpine3.10 !alpine3.11 !7.2-alpine !7.3-alpine !7.4-alpine
-seasclick !alpine3.23
+seasclick !alpine3.23 !alpine3.24
 simdjson !jessie !stretch
 sodium !jessie
 sqlsrv !7.1-alpine3.9 !7.1-alpine3.10
 statgrab !alpine3.12 !alpine3.13 !alpine3.14 !alpine3.15 !alpine3.16
+v8js !buster !bullseye !alpine3.12 !alpine3.13 !alpine3.14 !alpine3.15 !alpine3.16 !alpine3.17 !alpine3.18
 vips !alpine3.9 !jessie
 wikidiff2 !jessie !stretch
 xpass !buster

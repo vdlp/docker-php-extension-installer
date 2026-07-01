@@ -386,6 +386,7 @@ install-php-extensions @fix_letsencrypt
 | uploadprogress | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | uuid | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | uv | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |  |
+| v8js[*](#special-requirements-for-v8js) | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |  |
 | vips[*](#special-requirements-for-vips) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | vld | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | wddx |  |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -408,7 +409,7 @@ install-php-extensions @fix_letsencrypt
 | zookeeper | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | zstd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 
-*Number of supported extensions: 161*
+*Number of supported extensions: 162*
 <!-- END OF EXTENSIONS TABLE -->
 
 PS: the pre-installed PHP extensions are excluded from this list.
@@ -490,6 +491,8 @@ Here's the list of all the supported environment variables:
 | newrelic | `IPE_NEWRELIC_DAEMON=1` | Install the NewRelic daemon  |
 | newrelic | `IPE_NEWRELIC_KEEPLOG=1` | Keep the log files of NewRelic setup (`/tmp/nrinstall-….tar`)  |
 | newrelic | `NR_INSTALL_KEY` | Your New Relic license key |
+| ddtrace | `IPE_DD_APPSEC=1` | Also enable the Datadog [Application Security Monitoring](https://docs.datadoghq.com/security/application_security/) module (`ddappsec`). Requires PHP 7.0+ and the 1.x tracer line |
+| ddtrace | `IPE_DD_PROFILING=1` | Also enable the Datadog [Continuous Profiler](https://docs.datadoghq.com/profiler/) module (`datadog-profiling`). Requires PHP 7.1+, Alpine 3.13+ (or any Debian) and the 1.x tracer line |
 | swoole | `IPE_SWOOLE_WITHOUT_IOURING=1` | The io_uring kernel functionality is considered unsafe by security experts (see [here](https://security.googleblog.com/2023/06/learnings-from-kctf-vrps-42-linux.html) and [here](https://i.blackhat.com/BH-US-23/Presentations/US-23-Lin-bad_io_uring.pdf)). By default Swoole 6 and later is configured with io_uring support, use this environment variable to skip configuring io_uring |
 | saxon | `IPE_SAXON_EDITION=EE` | The Saxon edition to be used: `EE` for Enterprise Edition (default), `PE` for Professional Edition, `HE` for Home Edition |
 
@@ -509,7 +512,7 @@ Some extensions have special requirements:
 |---|---|
 | <a name="special-requirements-for-cassandra"></a>cassandra | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images<br />&bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `bookworm` docker images<br />&bull; Not available in `trixie` docker images |
 | <a name="special-requirements-for-ddtrace"></a>ddtrace | Not available in `jessie` docker images |
-| <a name="special-requirements-for-ecma_intl"></a>ecma_intl | &bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `trixie` docker images<br />&bull; Not available in `alpine3.22` docker images<br />&bull; Not available in `alpine3.23` docker images |
+| <a name="special-requirements-for-ecma_intl"></a>ecma_intl | &bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `trixie` docker images<br />&bull; Not available in `alpine3.22` docker images<br />&bull; Not available in `alpine3.23` docker images<br />&bull; Not available in `alpine3.24` docker images |
 | <a name="special-requirements-for-geos"></a>geos | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images |
 | <a name="special-requirements-for-judy"></a>judy | &bull; Not available in `alpine3.13` docker images<br />&bull; Not available in `alpine3.14` docker images<br />&bull; Not available in `alpine3.15` docker images |
 | <a name="special-requirements-for-lz4"></a>lz4 | Not available in `jessie` docker images |
@@ -520,11 +523,12 @@ Some extensions have special requirements:
 | <a name="special-requirements-for-phpy"></a>phpy | Not available in `buster` docker images |
 | <a name="special-requirements-for-pthreads"></a>pthreads | Requires images with PHP compiled with thread-safety enabled (`zts`) |
 | <a name="special-requirements-for-saxon"></a>saxon | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images<br />&bull; Not available in `alpine3.11` docker images<br />&bull; Not available in `7.2-alpine` docker images<br />&bull; Not available in `7.3-alpine` docker images<br />&bull; Not available in `7.4-alpine` docker images |
-| <a name="special-requirements-for-seasclick"></a>seasclick | Not available in `alpine3.23` docker images |
+| <a name="special-requirements-for-seasclick"></a>seasclick | &bull; Not available in `alpine3.23` docker images<br />&bull; Not available in `alpine3.24` docker images |
 | <a name="special-requirements-for-simdjson"></a>simdjson | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images |
 | <a name="special-requirements-for-sodium"></a>sodium | Not available in `jessie` docker images |
 | <a name="special-requirements-for-sqlsrv"></a>sqlsrv | &bull; Not available in `7.1-alpine3.9` docker images<br />&bull; Not available in `7.1-alpine3.10` docker images |
 | <a name="special-requirements-for-statgrab"></a>statgrab | &bull; Not available in `alpine3.12` docker images<br />&bull; Not available in `alpine3.13` docker images<br />&bull; Not available in `alpine3.14` docker images<br />&bull; Not available in `alpine3.15` docker images<br />&bull; Not available in `alpine3.16` docker images |
+| <a name="special-requirements-for-v8js"></a>v8js | &bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `alpine3.12` docker images<br />&bull; Not available in `alpine3.13` docker images<br />&bull; Not available in `alpine3.14` docker images<br />&bull; Not available in `alpine3.15` docker images<br />&bull; Not available in `alpine3.16` docker images<br />&bull; Not available in `alpine3.17` docker images<br />&bull; Not available in `alpine3.18` docker images |
 | <a name="special-requirements-for-vips"></a>vips | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `jessie` docker images |
 | <a name="special-requirements-for-wikidiff2"></a>wikidiff2 | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images |
 | <a name="special-requirements-for-xpass"></a>xpass | Not available in `buster` docker images |
@@ -559,85 +563,8 @@ Feel free to subscribe to it to receive failure notifications.
 
 ## How to contribute
 
-### Formatting code
+See the [`CONTIBUTING.md`](https://github.com/mlocati/docker-php-extension-installer/blob/master/CONTIBUTING.md) file.
 
-Before submitting any pull request, you should execute the `lint` script in the `scripts` directory (or `lint.bat` on Windows).
-
-If you don't do that, and if there's a coding style error, you'll see that the `Check shell coding style` and/or the `Check PHP coding style` GitHub Actions will fail.
-
-The error will be something like this:
-
-```diff
---- filename.orig
-+++ filename
-@@ -line number,7 +line number,7 @@
-     good line of code #1
-     good line of code #2
-     good line of code #3
--    the original line with a wrong coding style
-+    the line wrong coding style that has been corrected
-     good line of code #4
-     good line of code #5
-     good line of code #6
-```
-
-So, you should fix highlighted line (the one(s) at `line number`) by replacing what you see after the `-` with what you see after the `+`
-
-### Adding support to a new PHP extension?
-
-1. change the `install-php-extensions` script
-2. update the `data/supported-extensions` file, adding a new line with the handle of the extension and the list of supported PHP versions
-3. if the extension requires ZTS images:  
-   add a new line to the `data/special-requirements` file, with the extension handle followed by a space and `zts`
-
-See [this pull request](https://github.com/mlocati/docker-php-extension-installer/pull/60) for an example.
-
-### Changing the supported PHP versions for an already supported PHP extension?
-
-1. change the `install-php-extensions` script
-2. update the `data/supported-extensions` file, adding the new PHP version to the existing line corresponding to the updated extension
-
-See [this pull request](https://github.com/mlocati/docker-php-extension-installer/pull/62) for an example.
-
-### Improving code for an already supported extension?
-
-If you change some code that affects one or more extensions, please add a line with `Test: extension1, extension2` to the message of one of the pull request commits.
-That way, the test jobs will check the extension even if you don't touch the `data/supported-extensions` file.
-
-Here's an example of a commit message:
-
-```
-Improve the GD and ZIP extensions
-
-Test: gd, zip
-```
-
-Tests only check the installation of a single PHP extension at a time.
-If you want to test installing more PHP extensions at the same time, use a commit message like this:
-
-```
-Improve the GD and ZIP extensions
-
-Test: gd+zip
-```
-
-If your pull request contains multiple commits, we'll check the "Test:" message of every commit.
-If you want to stop parsing next commits, add `-STOP-` in the "Test:" line, for example:
-
-```
-Improve the GD and ZIP extensions
-
-Test: gd, zip, -STOP-
-```
-
-See [this pull request](https://github.com/mlocati/docker-php-extension-installer/pull/43) for an example.
-
-### PHP requirements and configure options
-
-PHP extensions published on the PECL archive contain a `package.xml` (or `package2.xml`) file describing the supported PHP versions and the options that can be used to compile it.
-When we add support for a new PHP extension, and when a new version of a PHP extension is released, we have to check those constraints.
-
-It's a rather tedious task, so I developed a project that lets you easily check those constraints: you can find it at https://mlocati.github.io/pecl-info ([here](https://github.com/mlocati/pecl-info) you can find its source code).
 
 ## For the maintainers
 
