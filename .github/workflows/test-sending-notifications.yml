@@ -1,9 +1,6 @@
 name: Test sending notifications
 
 on:
-  repository_dispatch:
-    types:
-      - test-sending-notifications
   workflow_dispatch:
 
 jobs:
@@ -12,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send
-        uses: appleboy/telegram-action@master
+        uses: appleboy/telegram-action@v1
         with:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           to: ${{ secrets.TELEGRAM_TO }}

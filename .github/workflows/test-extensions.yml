@@ -11,7 +11,7 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         name: Check order supported extensions list
         run: |
@@ -27,6 +27,22 @@ jobs:
             exit 1
           fi
           rm data/special-requirements.sorted
+      -
+        name: Check CI distros list
+        run: |
+          if ! test -s data/ci-distros; then
+            echo 'The data/ci-distros file is empty.' >&2
+            exit 1
+          fi
+          if INVALID="$(grep -nvE '^(alpine[0-9]+\.[0-9]+|[a-z]+)$' data/ci-distros)"; then
+            printf 'Invalid lines in data/ci-distros:\n%s\n' "$INVALID" >&2
+            exit 1
+          fi
+          DUPLICATES="$(sort data/ci-distros | uniq -d)"
+          if test -n "$DUPLICATES"; then
+            printf 'Duplicated lines in data/ci-distros:\n%s\n' "$DUPLICATES" >&2
+            exit 1
+          fi
 
   check_syntax_shell:
     name: Check shell coding style
@@ -34,19 +50,35 @@ jobs:
     steps:
       -
         name: Install Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v7
         with:
           go-version: ">=1.22.6"
           cache: false
       -
         name: Install shfmt
-        run: GO111MODULE=on go install mvdan.cc/sh/v3/cmd/shfmt@v3.13.1
+        run: GO111MODULE=on go install mvdan.cc/sh/v3/cmd/shfmt@v3.14.1
+      -
+        name: Checkout
+        uses: actions/checkout@v7
+      -
+        name: Check coding style
+        run: ./scripts/invoke-shfmt check
+
+  check_issues_shell:
+    name: Check shell code issues
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Install shellcheck
+        run: |
+          curl -sSLf -o /tmp/shellcheck.tar.xz https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz
+          sudo tar -xJf /tmp/shellcheck.tar.xz -C /usr/local/bin --strip-components=1 shellcheck-v0.11.0/shellcheck
       -
         name: Checkout
         uses: actions/checkout@v6
       -
-        name: Check coding style
-        run: ./scripts/invoke-shfmt check
+        name: Check code
+        run: ./scripts/invoke-shellcheck
 
   check_syntax_php:
     name: Check PHP coding style
@@ -60,45 +92,42 @@ jobs:
           tools: composer
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         name: Install Composer dependencies
         run: composer install --no-progress --classmap-authoritative --ansi --no-interaction
       -
         name: Check coding style
         run: composer run-script lint -- --dry-run --using-cache=no --diff --show-progress=dots --sequential --ansi --no-interaction -vv
+      -
+        name: Check JSON files
+        run: composer run-script check-json-schemas
 
-  test_extensions:
+  define_distros:
+    name: Define distros
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
+    runs-on: ubuntu-latest
+    outputs:
+      distros: ${{ steps.distros.outputs.distros }}
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v7
+      -
+        name: Define distros
+        id: distros
+        run: printf 'distros=%s\n' "$(./scripts/ci-get-distros)" >> "$GITHUB_OUTPUT"
+
+  test_extensions:
+    needs: define_distros
     strategy:
       fail-fast: false
       matrix:
-        distro:
-          - alpine3.9
-          - alpine3.10
-          - alpine3.11
-          - alpine3.12
-          - alpine3.13
-          - alpine3.14
-          - alpine3.15
-          - alpine3.16
-          - alpine3.17
-          - alpine3.18
-          - alpine3.19
-          - alpine3.20
-          - alpine3.21
-          - alpine3.22
-          - alpine3.23
-          - alpine3.24
-          - jessie
-          - stretch
-          - buster
-          - bullseye
-          - bookworm
-          - trixie
+        distro: ${{ fromJSON(needs.define_distros.outputs.distros) }}
     name: Check on ${{ matrix.distro }}
     runs-on: ubuntu-latest
     env:
@@ -106,32 +135,34 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       -
         name: Test extensions
-        run: ./scripts/ci-test-extensions from-commits "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+        run: ./scripts/ci-test-extensions from-commits "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
 
   test_restoring_packages:
     name: Test restoring packages
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
     runs-on: ubuntu-latest
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
-        run: docker run --rm --volume "$(pwd):/app" --workdir /app php:8.2-bullseye ./scripts/test-restore-apt
+        run: docker run --rm --volume "$(pwd):/app" --workdir /app php:8.2-bookworm ./scripts/test-restore-apt
 
   test_custom_version:
     name: Test installing specific versions
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
     runs-on: ubuntu-latest
     strategy:
@@ -146,7 +177,7 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         run: docker run --rm --volume "$(pwd):/app" --workdir /app php:7.4-cli-alpine ./scripts/test-installversion "${{ matrix.xdebug_version }}"
 
@@ -155,6 +186,7 @@ jobs:
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
     runs-on: ubuntu-latest
     strategy:
@@ -166,7 +198,7 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         run: docker run --rm --volume "$(pwd):/app" --workdir /app php:7.4-cli-alpine ./scripts/test-installcomposer "${{ matrix.composer_version }}"
 
@@ -176,6 +208,7 @@ jobs:
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
     runs-on: ubuntu-latest
     strategy:
@@ -193,7 +226,7 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         name: Install extension
         run: ./install-php-extensions "${{ matrix.source }}"
@@ -206,6 +239,7 @@ jobs:
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
     runs-on: ubuntu-latest
     strategy:
@@ -216,7 +250,7 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         run: docker run --rm --volume "$(pwd):/app" --workdir /app "php:8.1-${{ matrix.distro }}" "./scripts/ci-markused-${{ matrix.distro }}"
 
@@ -225,13 +259,14 @@ jobs:
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
     runs-on: ubuntu-latest
     container: php:8.1-cli-alpine
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         run: IPE_INSTANTCLIENT_BASIC=1 ./install-php-extensions oci8 pdo_oci
 
@@ -240,6 +275,7 @@ jobs:
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
     runs-on: ubuntu-latest
     strategy:
@@ -261,7 +297,7 @@ jobs:
         run: docker pull "php:${{ matrix.php-image }}"
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         name: Install Saxon
         run: |
@@ -278,6 +314,7 @@ jobs:
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
     runs-on: ubuntu-latest
     container: ${{ matrix.container }}
@@ -300,7 +337,7 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         run: ./install-php-extensions ${{ matrix.source }}
 
@@ -309,12 +346,13 @@ jobs:
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
     runs-on: ubuntu-latest
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         run: docker run --rm --volume "$(pwd):/app" --workdir /app php:8.2-cli-alpine ./scripts/test-icu-data-en-upgradable
 
@@ -323,12 +361,13 @@ jobs:
     needs:
       - check_syntax_data
       - check_syntax_shell
+      - check_issues_shell
       - check_syntax_php
     runs-on: ubuntu-latest
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       -
         name: Install extensions
         run: >

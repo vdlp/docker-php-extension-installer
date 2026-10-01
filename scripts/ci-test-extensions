@@ -1,12 +1,17 @@
 #!/bin/sh
 
 # Syntax:
-# - ci-test-extensions from-commits "<commit range>"
+# - ci-test-extensions from-commits <base commit> <head commit>
 #   Automatically detect the extensions to be tested by inspecting the git commits
 # - ci-test-extensions from-list "<space-separated extensions>"
 #   Test the specified extensions
 # - ci-test-extensions all
 #   Test all the supported extensions
+# - ci-test-extensions from-tests-file <tests file> <results directory>
+#   Perform the tests listed in the tests file (written by scripts/check-updates.php), one per line, in the format
+#   <comma-separated extensions> [<VARIABLE>=<value> ...]
+#   The results of the n-th test are written to <results directory>/<n>.txt (starting from 1), as lines in the format "<ok|failed> <PHP version> <extensions>";
+#   when all the tests have been performed, the <results directory>/done file is created
 #
 # Global environment variables used:
 # - IPETEST_DOCKER_DISTRO (required) the handle of the docker distibution to be used (eg 'buster', 'alpine3.14')
@@ -40,7 +45,7 @@ extractExtensionsFromCommits() {
 	STOP_EXTENSIONS_FOUND=0
 	IFS='
 '
-	for extractExtensionsFromCommits_hash in $(git -C "$CI_BUILD_DIR" log --pretty='format:%H' "$CI_COMMIT_RANGE"); do
+	for extractExtensionsFromCommits_hash in $(git -C "$CI_BUILD_DIR" log --pretty='format:%H' "$CI_COMMIT_BASE..$CI_COMMIT_HEAD"); do
 		extractExtensionsFromCommits_firstLine=1
 		extractExtensionsFromCommits_message="$(git -C "$CI_BUILD_DIR" log --pretty='format:%B' -n 1 "$extractExtensionsFromCommits_hash")"
 		IFS='
@@ -86,7 +91,7 @@ extractExtensionsFromData() {
 	IFS='
 '
 	extractExtensionsFromData_foundAt=
-	for extractExtensionsFromData_line in $(git -C "$CI_BUILD_DIR" diff --no-indent-heuristic --minimal --no-color --word-diff=none --no-renames --unified=0 "$CI_COMMIT_RANGE" -- data/supported-extensions); do
+	for extractExtensionsFromData_line in $(git -C "$CI_BUILD_DIR" diff --no-indent-heuristic --minimal --no-color --word-diff=none --no-renames --unified=0 "$CI_COMMIT_BASE...$CI_COMMIT_HEAD" -- data/supported-extensions); do
 		if test -n "$extractExtensionsFromData_line"; then
 			if test -z "$extractExtensionsFromData_foundAt"; then
 				if test -z "${extractExtensionsFromData_line##@@*}"; then
@@ -131,10 +136,10 @@ filterUnsupportedExensionsForDistro() {
 		filterUnsupportedExensionsForDistro_ok=1
 		IFS='+'
 		for filterUnsupportedExensionsForDistro_extension in $filterUnsupportedExensionsForDistro_extensions; do
-			if stringInList "!$IPETEST_DOCKER_DISTRO" "$(cat "$filterUnsupportedExensionsForDistro_reqs" | grep -E "^$filterUnsupportedExensionsForDistro_extension[ \t]")"; then
+			if stringInList "!$IPETEST_DOCKER_DISTRO" "$(cat "$filterUnsupportedExensionsForDistro_reqs" | grep -E "^${filterUnsupportedExensionsForDistro_extension}[ \t]")"; then
 				printf 'Note: extension "%s" is not supported for distro "%s"\n' "$filterUnsupportedExensionsForDistro_extension" "$IPETEST_DOCKER_DISTRO"
 				filterUnsupportedExensionsForDistro_ok=0
-			elif stringInList "!$filterUnsupportedExensionsForDistro_baseDistro" "$(cat "$filterUnsupportedExensionsForDistro_reqs" | grep -E "^$filterUnsupportedExensionsForDistro_extension[ \t]")"; then
+			elif stringInList "!$filterUnsupportedExensionsForDistro_baseDistro" "$(cat "$filterUnsupportedExensionsForDistro_reqs" | grep -E "^${filterUnsupportedExensionsForDistro_extension}[ \t]")"; then
 				printf 'Note: extension "%s" is not supported for distro "%s"\n' "$filterUnsupportedExensionsForDistro_extension" "$filterUnsupportedExensionsForDistro_baseDistro"
 				filterUnsupportedExensionsForDistro_ok=0
 			fi
@@ -171,7 +176,7 @@ getDockerImageName() {
 		for getDockerImageName_testExtensions in $1; do
 			IFS='+'
 			for getDockerImageName_testExtension in $getDockerImageName_testExtensions; do
-				if test -n "$(cat "$getDockerImageName_reqs" | grep -E "^$getDockerImageName_testExtension[ \t]+zts[ \t]*$")"; then
+				if test -n "$(cat "$getDockerImageName_reqs" | grep -E "^${getDockerImageName_testExtension}[ \t]+zts[ \t]*$")"; then
 					getDockerImageName_suffix='zts'
 				fi
 			done
@@ -192,7 +197,7 @@ getDockerImageName() {
 			if test "${getDockerImageName_log#*manifest unknown}" != "$getDockerImageName_log" || test "${getDockerImageName_log#*manifest for * not found}" != "$getDockerImageName_log"; then
 				return
 			fi
-			printf '%s\n' "$getDockerImageName_log"
+			printf 'Failed to pull the Docker image %s:\n%s\n' "$getDockerImageName_imageName" "$getDockerImageName_log" >&2
 			exit 1
 		fi
 	fi
@@ -299,22 +304,22 @@ getAllPHPVersionsForExtension() {
 # Return:
 # 0 (true): if test passes
 # 1 (false): if test fails
-testExtension() {
-	testExtensionsFromMessage_result=0
+testExtensions() {
+	testExtensions_result=0
 	IFS=' '
-	for testExtension_extension in $1; do
-		testExtension_extension="$(printf '%s' "$testExtension_extension" | sed -E 's/\+/ /g')"
-		printf '### TESTING EXTENSION(S) %s ###\n' "$testExtension_extension"
-		for testExtension_phpVersion in $(getAllPHPVersionsForExtensions "$testExtension_extension"); do
-			if test -z "${IPETEST_ONLY_PHPVERSIONS:-}" || stringInList "$testExtension_phpVersion" "$IPETEST_ONLY_PHPVERSIONS"; then
-				if ! testExtensionFor "$testExtension_extension" "$testExtension_phpVersion"; then
-					testExtensionsFromMessage_result=1
+	for testExtensions_extension in $1; do
+		testExtensions_extension="$(printf '%s' "$testExtensions_extension" | sed -E 's/\+/ /g')"
+		printf '### TESTING EXTENSION(S) %s ###\n' "$testExtensions_extension"
+		for testExtensions_phpVersion in $(getAllPHPVersionsForExtensions "$testExtensions_extension"); do
+			if test -z "${IPETEST_ONLY_PHPVERSIONS:-}" || stringInList "$testExtensions_phpVersion" "$IPETEST_ONLY_PHPVERSIONS"; then
+				if ! testExtensionFor "$testExtensions_extension" "$testExtensions_phpVersion"; then
+					testExtensions_result=1
 				fi
 			fi
 		done
 	done
 	resetIFS
-	return $testExtensionsFromMessage_result
+	return $testExtensions_result
 }
 
 # Test extensions with specific PHP versions
@@ -358,12 +363,13 @@ testExtensionFor() {
 				;;
 		esac
 	fi
-	if $(docker run --rm --volume "$CI_BUILD_DIR:/app" --env CI=true --env IPE_FIX_CACERTS=1 $testExtensionFor_ddtraceEnv --env IPE_ASPELL_LANGUAGES='en fr' --workdir /app "$testExtensionFor_Image" sh -c "./install-php-extensions $1 && php ./scripts/check-installed-extension.php $1" >"$testExtensionFor_out" 2>&1); then
+	if docker run --rm --volume "$CI_BUILD_DIR:/app" --env CI=true --env IPE_FIX_CACERTS=1 $testExtensionFor_ddtraceEnv $TEST_DOCKER_ENV --env IPE_ASPELL_LANGUAGES='en fr' --workdir /app "$testExtensionFor_Image" sh -c "./install-php-extensions $1 && php ./scripts/check-installed-extension.php $1" >"$testExtensionFor_out" 2>&1; then
 		testExtensionFor_end=$(date +%s)
 		testExtensionFor_delta=$(expr $testExtensionFor_end - $testExtensionFor_start)
 		rm -rf "$testExtensionFor_out"
 		printf ' - Passed in %s seconds\n' $testExtensionFor_delta
 		IPE_SUMMARY_GOOD="$(printf '%s- %s (%s)\n ' "${IPE_SUMMARY_GOOD% }" "$1" "$testExtensionFor_Image")"
+		recordTestResult ok "$2" "$1"
 		return 0
 	fi
 	printf '\n\n###############\n##           ##\n##  FAILED!  ##\n##           ##\n###############\n'
@@ -373,7 +379,71 @@ testExtensionFor() {
 	echo ''
 	rm -rf "$testExtensionFor_out"
 	IPE_SUMMARY_BAD="$(printf '%s- %s (%s)\n ' "${IPE_SUMMARY_BAD% }" "$1" "$testExtensionFor_Image")"
+	recordTestResult failed "$2" "$1"
 	return 1
+}
+
+# Append the result of a test to the TEST_RESULTS_FILE file (if set)
+#
+# Arguments:
+# $1: ok or failed
+# $2: the PHP version
+# $3: space-separated list with the names of the PHP extensions
+recordTestResult() {
+	if test -n "$TEST_RESULTS_FILE"; then
+		printf '%s %s %s\n' "$1" "$2" "$3" >>"$TEST_RESULTS_FILE"
+	fi
+}
+
+# Test a list of extensions
+#
+# Arguments:
+# $1: space-separated list with the names of the PHP extensions to be tested
+#
+# Update: SOME_TEST_FAILED, SOME_TEST_PERFORMED
+runTests() {
+	EXTENSIONS_TO_BE_TESTED="$1"
+	filterUnsupportedExensionsForDistro
+	if test -z "$EXTENSIONS_TO_BE_TESTED"; then
+		echo 'No extensions to be tested.'
+		return
+	fi
+	printf '### EXTENSIONS TO BE TESTED: %s\n' "$EXTENSIONS_TO_BE_TESTED"
+	SOME_TEST_PERFORMED=1
+	IFS='
+'
+	testExtensions "$EXTENSIONS_TO_BE_TESTED" || SOME_TEST_FAILED=1
+}
+
+# Perform the tests listed in a tests file
+#
+# Arguments:
+# $1: the tests file
+# $2: the results directory
+#
+# Update: SOME_TEST_FAILED, SOME_TEST_PERFORMED
+runTestsFromFile() {
+	mkdir -p "$2"
+	runTestsFromFile_total=$(grep -c . "$1" || true)
+	runTestsFromFile_count=0
+	while IFS=' ' read -r runTestsFromFile_extensions runTestsFromFile_variables <&3 || test -n "$runTestsFromFile_extensions"; do
+		if test -z "$runTestsFromFile_extensions"; then
+			continue
+		fi
+		runTestsFromFile_count=$((runTestsFromFile_count + 1))
+		printf '### TEST %s/%s: %s\n' "$runTestsFromFile_count" "$runTestsFromFile_total" "$(printf '%s %s' "$runTestsFromFile_extensions" "$runTestsFromFile_variables" | sed 's/ *$//')"
+		TEST_DOCKER_ENV=''
+		IFS=' '
+		for runTestsFromFile_variable in $runTestsFromFile_variables; do
+			TEST_DOCKER_ENV="$TEST_DOCKER_ENV --env $runTestsFromFile_variable"
+		done
+		resetIFS
+		TEST_RESULTS_FILE="$2/$runTestsFromFile_count.txt"
+		runTests "$(printf '%s' "$runTestsFromFile_extensions" | tr ',' ' ')"
+	done 3<"$1"
+	TEST_DOCKER_ENV=''
+	TEST_RESULTS_FILE=''
+	touch "$2/done"
 }
 
 echo 'Checking environment'
@@ -389,25 +459,43 @@ fi
 
 . "$CI_BUILD_DIR/scripts/common"
 
+# Additional arguments for "docker run" (for example: --env VARIABLE=value)
+TEST_DOCKER_ENV=''
+# The file where the results of the tests are written
+TEST_RESULTS_FILE=''
+SOME_TEST_FAILED=0
+SOME_TEST_PERFORMED=0
+IPE_SUMMARY_GOOD=''
+IPE_SUMMARY_BAD=''
+
 case "${1:-}" in
 	from-commits)
-		if test -z "${2:-}"; then
-			echo 'Missing commit range of the push event'
+		if test -z "${2:-}" || test -z "${3:-}"; then
+			echo 'Missing base and/or head commit of the pull request'
 			exit 1
 		fi
-		CI_COMMIT_RANGE="$2"
+		CI_COMMIT_BASE="$2"
+		CI_COMMIT_HEAD="$3"
 		STOP_EXTENSIONS_FOUND=0
 		EXTENSIONS_TO_BE_TESTED=''
 		extractExtensionsFromCommits
 		if test $STOP_EXTENSIONS_FOUND -eq 0; then
 			extractExtensionsFromData
 		fi
+		runTests "$EXTENSIONS_TO_BE_TESTED"
 		;;
 	from-list)
-		EXTENSIONS_TO_BE_TESTED="${2:-}"
+		runTests "${2:-}"
 		;;
 	all)
-		EXTENSIONS_TO_BE_TESTED="$(cat "$CI_BUILD_DIR/data/supported-extensions" | cut -d' ' -f1 | tr '\n' ' ')"
+		runTests "$(cat "$CI_BUILD_DIR/data/supported-extensions" | cut -d' ' -f1 | tr '\n' ' ')"
+		;;
+	from-tests-file)
+		if test -z "${2:-}" || test -z "${3:-}"; then
+			echo 'Missing tests file and/or results directory'
+			exit 1
+		fi
+		runTestsFromFile "$2" "$3"
 		;;
 	*)
 		if test -z "${1:-}"; then
@@ -419,23 +507,9 @@ case "${1:-}" in
 		;;
 esac
 
-filterUnsupportedExensionsForDistro
-
-if test -z "$EXTENSIONS_TO_BE_TESTED"; then
-	echo 'No extensions to be tested.'
+if test $SOME_TEST_PERFORMED -eq 0; then
 	exit 0
 fi
-
-printf '### EXTENSIONS TO BE TESTED: %s\n' "$EXTENSIONS_TO_BE_TESTED"
-SOME_TEST_FAILED=0
-IFS='
-'
-
-IPE_SUMMARY_GOOD=''
-IPE_SUMMARY_BAD=''
-for EXTENSION_TO_BE_TESTED in "$EXTENSIONS_TO_BE_TESTED"; do
-	testExtension "$EXTENSION_TO_BE_TESTED" || SOME_TEST_FAILED=1
-done
 
 printf '\n### SUMMARY\n'
 if test -z "$IPE_SUMMARY_GOOD"; then

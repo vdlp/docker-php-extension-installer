@@ -1,7 +1,7 @@
 [![Downloaded GitHub Releases](https://img.shields.io/github/downloads/mlocati/docker-php-extension-installer/total?label=Downloaded%20releases)](https://github.com/mlocati/docker-php-extension-installer/releases)
 [![Docker Hub pulls](https://img.shields.io/docker/pulls/mlocati/php-extension-installer?label=Docker%20Hub%20pulls)](https://hub.docker.com/r/mlocati/php-extension-installer)
 [![GitHub Registry pulls](https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/refs/heads/assets/resources/ghcr-badge.svg)](https://github.com/mlocati/docker-php-extension-installer/pkgs/container/php-extension-installer)
-[![Test recent](https://github.com/mlocati/docker-php-extension-installer/actions/workflows/test-recent-extensions.yml/badge.svg)](https://github.com/mlocati/docker-php-extension-installer/actions/workflows/test-recent-extensions.yml)
+[![Check updates](https://github.com/mlocati/docker-php-extension-installer/actions/workflows/check-updates.yml/badge.svg)](https://github.com/mlocati/docker-php-extension-installer/actions/workflows/check-updates.yml)
 
 # Easy installation of PHP extensions in official PHP Docker images
 
@@ -274,7 +274,7 @@ install-php-extensions @fix_letsencrypt
 | gd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | gearman | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | geoip |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| geos[*](#special-requirements-for-geos) |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| geos[*](#special-requirements-for-geos) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | geospatial | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | gettext | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | gmagick |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -313,7 +313,7 @@ install-php-extensions @fix_letsencrypt
 | mssql |  |  |  |  |  |  |  |  |  |  |  | &check; | &check; |
 | mysql |  |  |  |  |  |  |  |  |  |  |  | &check; | &check; |
 | mysqli | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| newrelic |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
+| newrelic | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | nsq |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | oauth | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | oci8 | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -333,7 +333,7 @@ install-php-extensions @fix_letsencrypt
 | pdo_oci | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | pdo_odbc | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | pdo_pgsql | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| pdo_snowflake[*](#special-requirements-for-pdo_snowflake) |  | &check; | &check; | &check; | &check; |  |  |  |  |  |  |  |  |
+| pdo_snowflake[*](#special-requirements-for-pdo_snowflake) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | pdo_sqlsrv | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | pgsql | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | phalcon | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |
@@ -351,7 +351,7 @@ install-php-extensions @fix_letsencrypt
 | recode |  |  |  |  |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; |
 | redis | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | relay | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |  |  |
-| rrd |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| rrd | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | saxon[*](#special-requirements-for-saxon) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |
 | seasclick[*](#special-requirements-for-seasclick) | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | seaslog |  |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -377,8 +377,8 @@ install-php-extensions @fix_letsencrypt
 | sysvmsg | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sysvsem | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | sysvshm | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
-| tensor |  |  |  | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |
-| tideways |  | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
+| tensor | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |  |  |  |  |
+| tideways | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | tidy | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | timezonedb | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | translit | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
@@ -510,7 +510,7 @@ Some extensions have special requirements:
 <!-- ########################################################### -->
 | Extension | Requirements |
 |---|---|
-| <a name="special-requirements-for-cassandra"></a>cassandra | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images<br />&bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `bookworm` docker images<br />&bull; Not available in `trixie` docker images |
+| <a name="special-requirements-for-cassandra"></a>cassandra | &bull; Not available in `jessie` docker images<br />&bull; Not available in `stretch` docker images |
 | <a name="special-requirements-for-ddtrace"></a>ddtrace | Not available in `jessie` docker images |
 | <a name="special-requirements-for-ecma_intl"></a>ecma_intl | &bull; Not available in `buster` docker images<br />&bull; Not available in `bullseye` docker images<br />&bull; Not available in `trixie` docker images<br />&bull; Not available in `alpine3.22` docker images<br />&bull; Not available in `alpine3.23` docker images<br />&bull; Not available in `alpine3.24` docker images |
 | <a name="special-requirements-for-geos"></a>geos | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images |
@@ -519,7 +519,7 @@ Some extensions have special requirements:
 | <a name="special-requirements-for-memprof"></a>memprof | &bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images<br />&bull; Not available in `alpine3.11` docker images<br />&bull; Not available in `alpine3.12` docker images<br />&bull; Not available in `alpine3.13` docker images<br />&bull; Not available in `alpine3.14` docker images<br />&bull; Not available in `alpine3.15` docker images |
 | <a name="special-requirements-for-parallel"></a>parallel | Requires images with PHP compiled with thread-safety enabled (`zts`) |
 | <a name="special-requirements-for-parle"></a>parle | Not available in `jessie` docker images |
-| <a name="special-requirements-for-pdo_snowflake"></a>pdo_snowflake | Not available in `alpine` docker images |
+| <a name="special-requirements-for-pdo_snowflake"></a>pdo_snowflake | &bull; Not available in `alpine` docker images<br />&bull; Not available in `jessie` docker images |
 | <a name="special-requirements-for-phpy"></a>phpy | Not available in `buster` docker images |
 | <a name="special-requirements-for-pthreads"></a>pthreads | Requires images with PHP compiled with thread-safety enabled (`zts`) |
 | <a name="special-requirements-for-saxon"></a>saxon | &bull; Not available in `alpine3.7` docker images<br />&bull; Not available in `alpine3.8` docker images<br />&bull; Not available in `alpine3.9` docker images<br />&bull; Not available in `alpine3.10` docker images<br />&bull; Not available in `alpine3.11` docker images<br />&bull; Not available in `7.2-alpine` docker images<br />&bull; Not available in `7.3-alpine` docker images<br />&bull; Not available in `7.4-alpine` docker images |
@@ -552,18 +552,67 @@ For example:
   PRETTY_NAME="Alpine Linux v3.14"
   ```
 
+## Library versions
+
+Some PHP extensions require libraries that `install-php-extensions` compiles or downloads when they aren't provided by the system.
+You can use a version different from the default one by setting the corresponding environment variable.
+For example:
+
+```sh
+IPE_LIBVERSION_XCRYPT=4.4.36 install-php-extensions xpass
+```
+
+**Beware**: other versions may not work, so use this feature at your own risk.
+
+Here's the list of these libraries (the default versions are the ones used by the latest release of `install-php-extensions`):
+
+<!-- START OF LIBRARIES -->
+<!-- ########################################################### -->
+<!-- #                                                         # -->
+<!-- #  DO NOT EDIT THIS TABLE: IT IS GENERATED AUTOMATICALLY  # -->
+<!-- #                                                         # -->
+<!-- #  EDIT THE data/dependencies.json FILE INSTEAD           # -->
+<!-- #                                                         # -->
+<!-- ########################################################### -->
+| Library | Environment variable | Default version | Used by | Notes |
+|---|---|---|---|---|
+| [libaom](https://aomedia.googlesource.com/aom/+refs) | `IPE_LIBVERSION_AOM` | `3.12.0` | gd | Only with PHP 8.1+ on Alpine < 3.15 and Debian < 12 (unless `IPE_GD_WITHOUTAVIF` is set) |
+| [libavif](https://github.com/AOMediaCodec/libavif/releases) | `IPE_LIBVERSION_AVIF` | `1.3.0` | gd | Only with PHP 8.1+ on Alpine < 3.15 and Debian < 12 (unless `IPE_GD_WITHOUTAVIF` is set) |
+| [Cassandra C++ driver](https://github.com/apache/cassandra-cpp-driver/tags) | `IPE_LIBVERSION_CASSANDRACPPDRIVER` | `2.17.1` | cassandra |  |
+| [libcmark](https://github.com/commonmark/cmark/releases) | `IPE_LIBVERSION_CMARK` | `0.31.2` | cmark | Only with cmake 3.15+ (with older cmake versions we use older libcmark versions) |
+| [libdatrie](https://github.com/tlwg/libdatrie/releases) | `IPE_LIBVERSION_DATRIE` | `0.2.14` | wikidiff2 | Only on Alpine |
+| [libdav1d](https://code.videolan.org/videolan/dav1d/-/tags) | `IPE_LIBVERSION_DAV1D` | `1.5.3` | gd | Only with PHP 8.1+ on Alpine < 3.15 and Debian < 12 (unless `IPE_GD_WITHOUTAVIF` is set) |
+| [libenchant1](https://github.com/rrthomas/enchant/releases) | `IPE_LIBVERSION_ENCHANT1` | `1.6.1` | enchant | Only with PHP < 8.0 on Alpine 3.12+ and Debian 11+ |
+| [Firebird](https://github.com/FirebirdSQL/firebird/releases) | `IPE_LIBVERSION_FIREBIRD` | `5.0.4.1812-0` | interbase, pdo_firebird, swoole | Only on Alpine, with PHP 8.4+ (with older PHP versions we use Firebird 2.5). Format: `<version>.<build>-<revision>` (as in the name of the source archive) |
+| [libgearman](https://github.com/gearman/gearmand/releases) | `IPE_LIBVERSION_GEARMAN` | `2.1.0` | gearman | Only on Alpine |
+| [HAT-trie](https://github.com/Tessil/hat-trie/releases) | `IPE_LIBVERSION_HATTRIE` | `0.7.1` | php_trie |  |
+| [libidnkit](https://jprs.co.jp/idn/) | `IPE_LIBVERSION_IDNKIT` | `2.3` | http | Only with PHP 7.0+ |
+| [ion-c](https://github.com/amzn/ion-c/releases) | `IPE_LIBVERSION_IONC` | `1.1.6` | ion |  |
+| [IP2Location C library](https://github.com/chrislim2888/IP2Location-C-Library/tags) | `IPE_LIBVERSION_IP2LOCATION` | `8.7.0` | ip2location |  |
+| [libmpdec](https://www.bytereef.org/mpdecimal/changelog.html) | `IPE_LIBVERSION_MPDEC` | `4.0.1` | decimal | Only on Alpine and Debian 12+ |
+| [Microsoft ODBC Driver for SQL Server (Alpine)](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server) | `IPE_LIBVERSION_MSODBC` | `18.7.1.1-1@ade174b7-8cea-4543-91a6-c33ae320c2f0` | pdo_sqlsrv, sqlsrv | Only on Alpine, with PHP 7.4+. Format: `<version>@<download path>` (see the download URLs on the [Microsoft website](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)) |
+| [Microsoft ODBC Driver 17 for SQL Server (Alpine)](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server#alpine17) | `IPE_LIBVERSION_MSODBC17` | `17.11.1.1-1@607ebe2c-e17c-4c34-b367-10a75b83bef9` | pdo_sqlsrv, sqlsrv | Only on Alpine, with PHP up to 7.3. Format: `<version>@<download path>` (see the download URLs on the [Microsoft website](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)) |
+| [libthai](https://github.com/tlwg/libthai/releases) | `IPE_LIBVERSION_THAI` | `0.1.30` | wikidiff2 | Only on Alpine |
+| [libtomcrypt](https://github.com/libtom/libtomcrypt/releases) | `IPE_LIBVERSION_TOMCRYPT` | `1.18.2` | pdo_firebird, swoole | Only on Alpine, with PHP 8.4+ |
+| [libtommath](https://github.com/libtom/libtommath/releases) | `IPE_LIBVERSION_TOMMATH` | `1.3.0` | pdo_firebird, swoole | Only on Alpine, with PHP 8.4+ |
+| [libxcrypt](https://github.com/besser82/libxcrypt/releases) | `IPE_LIBVERSION_XCRYPT` | `4.5.2` | xpass | Only on Alpine |
+| [LibXDiff](http://www.xmailserver.org/xdiff-lib.html) | `IPE_LIBVERSION_XDIFF` | `0.23` | xdiff |  |
+| [libyuv](https://chromium.googlesource.com/libyuv/libyuv/+log) | `IPE_LIBVERSION_YUV` | `d359a9f922af840b043535d43cf9d38b220d102e` | gd | Only with PHP 8.1+ on Alpine < 3.15 and Debian < 12 (unless `IPE_GD_WITHOUTAVIF` is set). Format: git commit hash |
+| [zstd](https://github.com/facebook/zstd/releases) | `IPE_LIBVERSION_ZSTD` | `1.5.7` | redis | Only with redis 5+ |
+<!-- END OF LIBRARIES -->
+
 ## Tests
 
 When submitting a pull request, a [GitHub Action](https://github.com/mlocati/docker-php-extension-installer/blob/master/.github/workflows/test-extensions.yml) is executed to check if affected PHP extensions actually work (see below).
 
-Furthermore, we also check that new versions of extensions in the PECL repository will still work.
-This is done on a scheduled basis with another [GitHub Action](https://github.com/mlocati/docker-php-extension-installer/blob/master/.github/workflows/test-recent-extensions.yml).  
+Furthermore, we also check that new versions of the PHP extensions and of the libraries they use will still work.
+This is done on a scheduled basis with another [GitHub Action](https://github.com/mlocati/docker-php-extension-installer/blob/master/.github/workflows/check-updates.yml).  
 In case of failure, a message is sent to a [Telegram Channel](https://t.me/docker_php_extension_installer).  
 Feel free to subscribe to it to receive failure notifications.
 
 ## How to contribute
 
-See the [`CONTIBUTING.md`](https://github.com/mlocati/docker-php-extension-installer/blob/master/CONTIBUTING.md) file.
+See the [`CONTRIBUTING.md`](https://github.com/mlocati/docker-php-extension-installer/blob/master/CONTRIBUTING.md) file.
 
 
 ## For the maintainers

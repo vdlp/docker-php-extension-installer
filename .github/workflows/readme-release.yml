@@ -4,37 +4,46 @@ on:
   push:
     branches:
       - master
-  create:
     tags:
       - "*"
-  repository_dispatch:
-    types:
-      - readme-release
   workflow_dispatch:
 
 jobs:
   readme-release:
+    name: Update README and check if we have to release
     runs-on: ubuntu-latest
-    env:
-      VERSIONTAG_THIS: ""
+    outputs:
+      versiontag-this: ${{ steps.tag-after-push.outputs.versiontag-this || steps.tag-received.outputs.versiontag-this }}
+      versiontag-previous: ${{ steps.tag-after-push.outputs.versiontag-previous || steps.tag-received.outputs.versiontag-previous }}
+      create-tag: ${{ steps.tag-after-push.outputs.versiontag-this != '' && 'yes' || 'no' }}
     steps:
       -
         name: Checkout
         if: >
           (github.event_name == 'push' && github.ref == 'refs/heads/master')
-          || (github.event_name == 'create' && github.event.ref_type == 'tag')
-          || github.event_name == 'repository_dispatch'
-        uses: actions/checkout@v6
+          || (github.event_name == 'push' && github.ref_type == 'tag')
+          || github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v7
         with:
           ref: master
           fetch-depth: 0
       -
+        name: Setup PHP
+        if: >
+          (github.event_name == 'push' && github.ref == 'refs/heads/master')
+          || github.event_name == 'workflow_dispatch'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+          coverage: none
+          tools: none
+      -
         name: Update README
         if: >
           (github.event_name == 'push' && github.ref == 'refs/heads/master')
-          || github.event_name == 'repository_dispatch'
+          || github.event_name == 'workflow_dispatch'
         run: |
-          ./scripts/update-readme
+          php ./scripts/update-readme.php
           if ! git ls-files -m | grep -qE '^README\.md$'; then
             echo 'README.md has not been changed'
           else
@@ -49,10 +58,9 @@ jobs:
         name: Look for the recent version tags
         if: >
           (github.event_name == 'push' && github.ref == 'refs/heads/master')
-          || (github.event_name == 'create' && github.event.ref_type == 'tag')
-          || github.event_name == 'repository_dispatch'
+          || (github.event_name == 'push' && github.ref_type == 'tag')
+          || github.event_name == 'workflow_dispatch'
         run: |
-          TAGS="$(git tag --list --sort=-version:refname)"
           VERSIONTAG_LAST=
           VERSIONTAG_PENULTIMATE=
           for TAG in $(git tag --list --sort=-version:refname); do
@@ -74,6 +82,7 @@ jobs:
           printf 'VERSIONTAG_PENULTIMATE=%s\n' "$VERSIONTAG_PENULTIMATE" >> "$GITHUB_ENV"
       -
         name: Check if we need to create a version tag after a push
+        id: tag-after-push
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
           VERSIONTAG_THIS=
@@ -98,37 +107,12 @@ jobs:
               printf 'We do not need to create a new version tag since no relevant files changed\n'
             fi
           fi
-          printf 'VERSIONTAG_THIS=%s\n' "$VERSIONTAG_THIS" >> "$GITHUB_ENV"
-          printf 'VERSIONTAG_PREVIOUS=%s\n' "$VERSIONTAG_LAST" >> "$GITHUB_ENV"
-      -
-        name: Sleep for a while before creating a tag
-        if: env.VERSIONTAG_THIS != ''
-        uses: actions/github-script@v8
-        with:
-          script: |
-            await new Promise(resolve => setTimeout(resolve, 30000));
-      -
-        name: Create version tag after a push in the local repository
-        if: env.VERSIONTAG_THIS != ''
-        run: |
-          git tag -- "$VERSIONTAG_THIS"
-          printf 'VERSIONTAG_THIS_SHA=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-      -
-        name: Create version tag after a push in the remote repository
-        if: env.VERSIONTAG_THIS != ''
-        uses: actions/github-script@v8
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${process.env.VERSIONTAG_THIS}`,
-              sha: process.env.VERSIONTAG_THIS_SHA
-            })
+          printf 'versiontag-this=%s\n' "$VERSIONTAG_THIS" >> "$GITHUB_OUTPUT"
+          printf 'versiontag-previous=%s\n' "$VERSIONTAG_LAST" >> "$GITHUB_OUTPUT"
       -
         name: Check format of received tag
-        if: github.event_name == 'create' && github.event.ref_type == 'tag'
+        id: tag-received
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         run: |
           VERSIONTAG_THIS="${GITHUB_REF#refs/tags/}"
           if test "$VERSIONTAG_THIS" = "$VERSIONTAG_LAST"; then
@@ -139,14 +123,52 @@ jobs:
               VERSIONTAG_THIS=
             fi
           else
-              printf 'Last created tag %s is not %\n' "$VERSIONTAG_THIS" "$VERSIONTAG_LAST"
+              printf 'Last created tag %s is not %s\n' "$VERSIONTAG_THIS" "$VERSIONTAG_LAST"
               VERSIONTAG_THIS=
           fi
-          printf 'VERSIONTAG_THIS=%s\n' "$VERSIONTAG_THIS" >> "$GITHUB_ENV"
-          printf 'VERSIONTAG_PREVIOUS=%s\n' "$VERSIONTAG_PENULTIMATE" >> "$GITHUB_ENV"
+          printf 'versiontag-this=%s\n' "$VERSIONTAG_THIS" >> "$GITHUB_OUTPUT"
+          printf 'versiontag-previous=%s\n' "$VERSIONTAG_PENULTIMATE" >> "$GITHUB_OUTPUT"
+
+  release:
+    name: Create the release
+    needs: readme-release
+    if: needs.readme-release.outputs.versiontag-this != ''
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && 'readme-release-approval' || 'readme-release-immediate' }}
+    concurrency:
+      group: readme-release
+      cancel-in-progress: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    env:
+      VERSIONTAG_THIS: ${{ needs.readme-release.outputs.versiontag-this }}
+      VERSIONTAG_PREVIOUS: ${{ needs.readme-release.outputs.versiontag-previous }}
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: master
+          fetch-depth: 0
+      -
+        name: Create version tag after a push in the local repository
+        if: needs.readme-release.outputs.create-tag == 'yes'
+        run: |
+          git tag -- "$VERSIONTAG_THIS"
+          printf 'VERSIONTAG_THIS_SHA=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      -
+        name: Create version tag after a push in the remote repository
+        if: needs.readme-release.outputs.create-tag == 'yes'
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${process.env.VERSIONTAG_THIS}`,
+              sha: process.env.VERSIONTAG_THIS_SHA
+            })
       -
         name: Extract release notes
-        if: env.VERSIONTAG_THIS != ''
         run: |
           printf 'Generating release notes for tag %s\n' "$VERSIONTAG_THIS"
           if test -z "$VERSIONTAG_PREVIOUS"; then
@@ -163,18 +185,15 @@ jobs:
           printf 'RELEASE_NOTES<<EOF\n%s\nEOF\n' "$RELEASE_NOTES" >> "$GITHUB_ENV"
       -
         name: Set script version
-        if: env.VERSIONTAG_THIS != ''
         run: sed -i -E "s/^(IPE_VERSION=)master$/\1$VERSIONTAG_THIS/" install-php-extensions
       -
         name: Login to Docker Hub
-        if: env.VERSIONTAG_THIS != ''
         uses: docker/login-action@v4
         with:
           username: mlocati
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Login to GitHub Container Registry
-        if: env.VERSIONTAG_THIS != ''
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
@@ -182,11 +201,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       -
         name: Set up docker buildx
-        if: env.VERSIONTAG_THIS != ''
         uses: docker/setup-buildx-action@v4
       -
         name: Define versions
-        if: env.VERSIONTAG_THIS != ''
         id: define-versions
         run: |
           printf 'mayor-minor-patch=%s\n' "$VERSIONTAG_THIS" >>"$GITHUB_OUTPUT"
@@ -194,7 +211,6 @@ jobs:
           printf 'mayor=%s\n' "${VERSIONTAG_THIS%%.*}" >>"$GITHUB_OUTPUT"
       -
         name: Build and push docker image
-        if: env.VERSIONTAG_THIS != ''
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -220,7 +236,6 @@ jobs:
               linux/s390x
       -
         name: Create release
-        if: env.VERSIONTAG_THIS != ''
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ env.VERSIONTAG_THIS }}

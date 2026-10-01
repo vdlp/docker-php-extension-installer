@@ -6,146 +6,50 @@ The creation of a new version is done automatically by the [`readme-release.yml`
 
 Whenever a push to the GitHub repository changes the [`install-php-extensions`](https://github.com/mlocati/docker-php-extension-installer/blob/master/install-php-extensions) script,
 that Action creates a new tag, incrementing the patch level (for example, if the previous version was `1.2.3`, it creates the tag `1.2.4`).
-Before doing that, the Action waits for 30 seconds, so that maintainers can cancel the tag creation if they want to create a different tag (for example, `1.3.3`).
+Before doing that, the Action waits for the approval of a maintainer (`readme-release-approval` environment).
+If maintainers want to create a different tag (for example, `1.3.3`), they can push it manually: the pending release is then canceled automatically.
 
 Once this new tag is created automatically (or when maintainers push a new version-like tag to the repository), the Action creates a new release, attaching it the `install-php-extensions` script to it
 (so that users can download it via the `https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions` URL).
 
-## Extensions to be monitored
+## Monitoring external dependencies
 
-### cmark
+`install-php-extensions` relies on some external dependencies that need to be checked periodically:
 
-The `cmark` PHP extension requires the `libcmark` system library.
-It's not available on Debian/Alpine Linux, so we install it manually.
-We need to monitor new releases at https://github.com/commonmark/cmark/releases
+- some PECL extensions don't have stable versions (or their stable versions are very old), so by default we install them in a non-stable version (`beta`, `alpha`, ...)
+- some libraries and extensions aren't available in the Linux distributions or in the PECL archive, so we download a specific version of them (or a specific git commit)
+- some extensions (or the libraries they use) are downloaded in their latest version from outside the PECL archive
 
-### decimal
+The [`check-updates.yml`](https://github.com/mlocati/docker-php-extension-installer/blob/master/.github/workflows/check-updates.yml) GitHub Action runs every day the [`scripts/check-updates.php`](https://github.com/mlocati/docker-php-extension-installer/blob/master/scripts/check-updates.php) script, which detects:
 
-The `decimal` PHP extension requires the `libmpdec` system library.
-It's not available on Alpine Linux, so we install it manually.
-We need to monitor new releases at https://www.bytereef.org/mpdecimal/changelog.html
+- the new versions of the PECL extensions (from the feed of the latest PECL releases).
+- if the PECL extensions that we install in a non-stable version by default have a more stable release (for example, a `beta` or `stable` release for an extension we install as `alpha`).
+  These extensions are detected automatically by parsing `install-php-extensions`.
+- the new versions of the libraries and extensions we download manually.
+  These are listed in the [`data/dependencies.json`](https://github.com/mlocati/docker-php-extension-installer/blob/master/data/dependencies.json) file: for the ones with `"pinnedVersion": true`, the version in use is read from the `IPE_LIBVERSION_...` (libraries) and `IPE_EXTVERSION_...` (PHP extensions) variables defined at the beginning of `install-php-extensions`, so there's no need to update the script when upgrading a dependency.
+  The ones with `"pinnedVersion": false` are downloaded by `install-php-extensions` in their latest version.
 
-### ecma_intl
+The new versions are then tested on all the supported Linux distributions (the new versions of the libraries and extensions we download manually are tested by setting the corresponding `IPE_LIBVERSION_...`/`IPE_EXTVERSION_...` variable).
+New versions that fail are tested again every day, until they work.
 
-The only available versions of this PHP extension are all alpha.
-We should switch to the stable release once it will be available.
+A Telegram notification is sent:
 
-### gearman
+- every time some tests fail
+- when a new version of a library or extension we download manually is available (only once, saying whether its tests passed)
+- when a PECL extension that we install in a non-stable version has a more stable release (only once)
+- when there are problems that require updating the script, `data/dependencies.json` or `install-php-extensions` (for example, when the version in use or the latest version of a dependency can't be detected)
 
-The `gearman` PHP extension requires the `libgearman` system library.
-It's not available on Alpine Linux, so we install it manually.
-We need to monitor new releases at https://github.com/gearman/gearmand/releases
+Temporary problems (like websites that can't be reached) are only reported as warnings in the Action log.
 
-### geoip
+The detection can also be executed locally:
 
-The latest stable release of the `geoip` PHP extension is very old, so we install the latest beta release.
-We should switch to the stable release once it will be available.
+```sh
+php scripts/check-updates.php detect --state-file=check-updates-state.json --tests-file=check-updates-tests.txt
+```
 
-### geospatial
-
-The only available versions of the `geospatial` PHP extension are all beta.
-We should switch to the stable release once it will be available.
-
-### gmagick
-
-The only available versions of the `gmagick` PHP extension are all alpha/beta.
-We should switch to the stable release once it will be available.
-
-### http
-
-The `http` PHP extension may use the `libidnkit` system library since version 3.0.0.
-It's not available on Alpine Linux, so we install it manually.
-We need to monitor new releases at https://jprs.co.jp/idn
-
-### ion
-
-- We manually compile the `ion-c` library.
-  We need to monitor new releases at https://github.com/amzn/ion-c/releases
-- The only available versions of the `ion` PHP extension are all alpha.
-  We should switch to the stable release once it will be available.
-
-### ionCube Loader
-
-The `ionCube Loader` PHP extension is not available in the PECL archive, so we install it manually.
-We need to monitor new releases at https://www.ioncube.com/news.php
-
-### lz4
-
-The `lz4` PHP extension is not available in the PECL archive, so we install it manually.
-We need to monitor new releases at https://github.com/kjdev/php-ext-lz4/tags
-
-### mosquitto
-
-The only available versions of the `mosquitto` PHP extension are all alpha/beta.
-We should switch to the stable release once it will be available.
-
-## php_trie
-
-The `php_trie` PHP extension uses the HAT-trie library.
-We need to monitor new releases at https://github.com/Tessil/hat-trie/releases
-
-### opencensus
-
-The only available versions of the `opencensus` PHP extension are all alpha.
-We should switch to the stable release once it will be available.
-
-### operator
-
-The only available versions of the `operator` PHP extension are all beta.
-We should switch to the stable release once it will be available.
-
-### parle
-
-The only available versions of the `parle` PHP extension are all beta.
-We should switch to the stable release once it will be available.
-
-### snappy
-
-The `snappy` PHP extension is not available in the PECL archive, so we install it manually.
-We need to monitor new releases at https://github.com/kjdev/php-ext-snappy/tags
-
-### snuffleupagus
-
-The `snuffleupagus` PHP extension is not available in the PECL archive, so we install it manually.
-We need to monitor new releases at https://github.com/jvoisin/snuffleupagus/releases
-
-## spx
-
-The `spx` PHP extension is not available in the PECL archive, so we install it manually.
-We need to monitor new releases at https://github.com/NoiseByNorthwest/php-spx/tags
-
-### sqlsrv / pdo_sqlsrv 
-
-The `pdo_sqlsrv` and `sqlsrv` PHP extensions require the Microsoft ODBC Driver for SQL Server.
-On Alpine Linux there's no way to automatically install its latest version, so we install it manually.
-We need to monitor new releases at https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server#alpine18
-
-### translit
-
-The only available versions of the `translit` PHP extension are all beta.
-We should switch to the stable release once it will be available.
-
-### uv
-
-The only available versions of the `uv` PHP extension are all beta.
-We should switch to the stable release once it will be available.
-
-### v8js
-
-The `v8js` PHP extension is not available in the PECL archive in a version that supports PHP 8.x, so we install it manually from the `php8` branch at https://github.com/phpv8/v8js.
-We pin a specific commit hash; we should periodically update it as new commits land on that branch.
-
-### vld
-
-The only available versions of this PHP extension are all beta.
-We should switch to the stable release once it will be available.
-
-## xdiff
-
-The `xdiff` PHP extension uses the LibXDiff library.
-We need to monitor new releases at http://www.xmailserver.org/xdiff-lib.html
-
-### xmlrpc
-
-The only available versions of the `xmlrpc` PHP extension are all beta.
-We should switch to the stable release once it will be available.
+When adding to `install-php-extensions` a new library or extension that is downloaded manually, remember to add it to `data/dependencies.json`.
+If we download a specific version of it, set `"pinnedVersion": true` and define its version in a new `IPE_LIBVERSION_...` variable (for libraries) or `IPE_EXTVERSION_<EXTENSION>` variable (for PHP extensions), with the format `VARIABLE="${VARIABLE:-version}"` so that it can be overridden
+(the script fails if one of these variables doesn't have a corresponding entry in `data/dependencies.json`, and vice versa).
+The libraries with a pinned version are also documented in the README.md file (the default versions are read from `install-php-extensions`).
+If a library or extension shouldn't be checked for updates, add a `skipCheck` property explaining why; if the new versions of a pinned library or extension can't be tested automatically, add a `skipTest` property explaining why.
+If the latest version can't be detected with the generic sources, use the `custom` source and add to the `CustomLatestVersion` class of `scripts/check-updates.php` a method with the name of the key of the item.

@@ -16,7 +16,20 @@ if errorlevel 1 (
     echo Docker is not installed, or it's not running >&2
     set rc=1
 ) else (
-    docker run --rm -v "%SRC_DIR%:/src" -w /src --entrypoint /src/scripts/invoke-shfmt mvdan/shfmt:v3.13.1-alpine fix
+    docker run --rm -v "%SRC_DIR%:/src" -w /src --entrypoint /src/scripts/invoke-shfmt mvdan/shfmt:v3.14.1-alpine fix
+    if errorlevel 1 (
+        echo ERROR! >&2
+        set rc=1
+    )
+)
+
+echo # Checking shell scripts
+docker --version >NUL 2>NUL
+if errorlevel 1 (
+    echo Docker is not installed, or it's not running >&2
+    set rc=1
+) else (
+    docker run --rm -v "%SRC_DIR%:/src" -w /src --entrypoint /src/scripts/invoke-shellcheck koalaman/shellcheck-alpine:v0.11.0
     if errorlevel 1 (
         echo ERROR! >&2
         set rc=1
@@ -34,6 +47,24 @@ if errorlevel 1 (
         set rc=1
     ) else (
         call composer run-script lint
+        if errorlevel 1 (
+            echo ERROR! >&2
+            set rc=1
+        )
+    )
+)
+
+echo # Checking JSON files
+call composer --version >NUL 2>NUL
+if errorlevel 1 (
+    echo Composer is not installed. >&2
+    set rc=1
+) else (
+    if not exist .\vendor\autoload.php (
+        echo Composer dependencies are not installed. >&2
+        set rc=1
+    ) else (
+        call composer run-script check-json-schemas
         if errorlevel 1 (
             echo ERROR! >&2
             set rc=1
